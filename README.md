@@ -1,74 +1,110 @@
-# DVR-timeline-version-increments
-Script to increment timeline versions in DaVinci Resolve.
+# DaVinci Resolve Timeline Version Updater
 
-## Übersicht
-Das Skript `timeline_version_up.py` ist ein Hilfswerkzeug für DaVinci Resolve, das die automatische Umbenennung von Timelines im Media Pool ermöglicht. Es unterstützt verschiedene Platzhalter und Muster für die Namensgebung und kann Versionsnummern automatisch inkrementieren.
+[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 
-## Voraussetzungen
-- DaVinci Resolve Studio (mit aktiviertem Scripting)
-- Python 3.x
-- DaVinciResolveScript Modul
+A Python script for automatic version management of timelines in DaVinci Resolve Studio. This script enables renaming of timelines in the DaVinci Resolve Media Pool and automatically increments version numbers in timeline names.
+
+## Features
+- Automatic timeline versioning
+- Flexible naming patterns with placeholders
+- Support for various version formats
+- Detailed logging for troubleshooting
+
+## Prerequisites
+- DaVinci Resolve Studio (with scripting enabled)
+- Python 3.6 or higher
+- DaVinciResolveScript module
 
 ## Installation
-1. Stellen Sie sicher, dass das Scripting in DaVinci Resolve aktiviert ist
-2. Das Skript sucht automatisch nach dem DaVinciResolveScript Modul in den Standard-Pfaden:
-   - macOS: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules`
-   - Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules`
-   - Linux: `/opt/resolve/Developer/Scripting/Modules`
 
-## Verwendung
+1. Ensure DaVinci Resolve Studio is installed with scripting enabled
+2. Python 3.6 or higher must be installed
+3. Copy the script to any folder
+4. Ensure the DaVinciResolveScript module path is correctly configured
+
+The script automatically searches for the DaVinciResolveScript module in standard paths:
+- macOS: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules`
+- Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules`
+- Linux: `/opt/resolve/Developer/Scripting/Modules`
+
+## Usage
 ```bash
-python3 timeline_version_up.py "NeuerNameMuster"
+python3 timeline_version_up.py "NewNamePattern"
 ```
 
-### Verfügbare Platzhalter
-- `{n}`         - Fortlaufende Nummer
-- `{original}`  - Originaler Timeline-Name
-- `{date}`      - Aktuelles Datum im Format YYYY-MM-DD
-- `{version}`   - Versionsnummer aus dem Original-Namen (z.B. "v001")
-- `{version+1}` - Versionsnummer um 1 erhöhen
-- `{version-1}` - Versionsnummer um 1 verringern
+### Available Placeholders
+- `{n}`         - Sequential number
+- `{original}`  - Original timeline name
+- `{date}`      - Current date in YYYY-MM-DD format
+- `{version}`   - Version number from original name (e.g., "v001")
+- `{version+1}` - Increment version number by 1
+- `{version-1}` - Decrement version number by 1
 
-### Beispiele
-1. Versionsnummer erhöhen:
+### Examples
+1. Increment version number:
    ```bash
-   python3 timeline_version_up.py "{version+1}"
+   python3 timeline_version_up.py "{original}_{version+1}"
    ```
-   Wandelt z.B. "Timeline_v001" in "Timeline_v002" um
+   Converts e.g., "Timeline_v001" to "Timeline_v002"
 
-2. Sequenznummer und Datum hinzufügen:
+2. Add sequence number and date:
    ```bash
    python3 timeline_version_up.py "Scene_{n}_{date}"
    ```
-   Erzeugt z.B. "Scene_1_2024-03-20"
+   Creates e.g., "Scene_1_2024-03-20"
 
-## Funktionsweise
-1. Das Skript verbindet sich mit DaVinci Resolve
-2. Es liest die ausgewählten Elemente im Media Pool
-3. Für jedes ausgewählte Element:
-   - Prüft, ob es sich um eine Timeline handelt
-   - Verarbeitet die Versionsoperationen
-   - Ersetzt die Platzhalter
-   - Benennt die Timeline um
+## How It Works
+1. The script connects to DaVinci Resolve
+2. Reads selected items from the Media Pool
+3. For each selected item:
+   - Checks if it's a timeline
+   - Processes version operations
+   - Replaces placeholders
+   - Renames the timeline
 
-## Fehlerbehandlung
-- Das Skript protokolliert alle Aktionen und Fehler
-- Bei Problemen werden detaillierte Fehlermeldungen ausgegeben
-- Eine Zusammenfassung der verarbeiteten Elemente wird am Ende angezeigt
+## Error Handling
+- All actions and errors are logged
+- Detailed error messages are provided
+- A summary of processed items is displayed at the end
 
 ## Logging
-Das Skript verwendet das Python-Logging-System mit folgenden Log-Levels:
-- INFO: Normale Operationen und Erfolgsmeldungen
-- WARNING: Nicht-kritische Probleme
-- ERROR: Fehler bei der Verarbeitung
-- CRITICAL: Schwerwiegende Fehler (z.B. keine Verbindung zu Resolve)
+The script uses Python's logging system with the following levels:
+- INFO: Normal operations and success messages
+- WARNING: Non-critical issues
+- ERROR: Processing errors
+- CRITICAL: Severe errors (e.g., no connection to Resolve)
 
-## Einschränkungen
-- Funktioniert nur mit Timelines (andere Medientypen werden übersprungen)
-- Erfordert DaVinci Resolve Studio mit aktiviertem Scripting
-- Versionsnummern müssen im Format "v001", "V2" oder "version1" vorliegen
+## Limitations
+- Works only with timelines (other media types are skipped)
+- Requires DaVinci Resolve Studio with scripting enabled
+- Version numbers must be in format "v001", "V2", or "version1"
 
-## Tipps
-- Testen Sie neue Namensmuster zunächst mit einem einzelnen Element
-- Verwenden Sie die Logging-Ausgaben zur Fehlersuche
-- Sichern Sie wichtige Timelines vor der Umbenennung
+## Tips
+- Test new naming patterns with a single item first
+- Use logging output for troubleshooting
+- Backup important timelines before renaming
+
+## License
+MIT License - See LICENSE file for details
+
+## Contributing
+Contributions are welcome! Please create a pull request or open an issue for suggestions.
+
+## Known Issues
+- Only works with DaVinci Resolve Studio (not the free version)
+- Requires scripting to be enabled in DaVinci Resolve
+
+## Changelog
+### v1.0.0 (2024-03-20)
+- Initial release
+- Basic version management
+- Placeholder system
+- Logging integration
+
+## Support
+For problems or questions:
+1. Check the documentation
+2. Search for similar issues
+3. Create a new issue with detailed error description
