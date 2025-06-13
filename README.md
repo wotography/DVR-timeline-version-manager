@@ -45,7 +45,7 @@ python3 timeline_version_up.py "NewNamePattern"
 ### Examples
 1. Increment version number:
    ```bash
-   python3 timeline_version_up.py "{original}_{version+1}"
+   python3 timeline_version_up.py "{version+1}"
    ```
    Converts e.g., "Timeline_v001" to "Timeline_v002"
 
