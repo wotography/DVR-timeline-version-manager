@@ -10,6 +10,7 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Automatic timeline versioning
 - Flexible naming patterns with placeholders
 - Support for various version formats
+- Intelligent date handling (removes existing dates)
 - Detailed logging for troubleshooting
 
 ## Prerequisites
@@ -37,30 +38,47 @@ python3 timeline_version_up.py "NewNamePattern"
 ### Available Placeholders
 - `{n}`         - Sequential number
 - `{original}`  - Original timeline name
-- `{date}`      - Current date in YYYY-MM-DD format
+- `{current_date}` - Current date in YYYY-MM-DD format (removes any existing date)
 - `{version}`   - Version number from original name (e.g., "v001")
 - `{version+1}` - Increment version number by 1
 - `{version-1}` - Decrement version number by 1
 
-### Examples
-1. Increment version number:
-   ```bash
-   python3 timeline_version_up.py "{version+1}"
-   ```
-   Converts e.g., "Timeline_v001" to "Timeline_v002"
+### Supported Date Formats
+The script can detect and remove the following date formats from timeline names:
+- YYYY-MM-DD (e.g., 2025-03-21)
+- DD-MM-YYYY (e.g., 21-03-2025)
+- MM-DD-YYYY (e.g., 03-21-2025)
+- YYYY/MM/DD (e.g., 2025/03/21)
+- DD/MM/YYYY (e.g., 21/03/2025)
+- MM/DD/YYYY (e.g., 03/21/2025)
 
-2. Add sequence number and date:
+When using the `{current_date}` placeholder, the script will:
+1. Remove any existing date in any of the supported formats
+2. Add the current date in YYYY-MM-DD format
+3. Clean up any resulting double underscores or spaces
+
+### Examples
+1. Increment version number and add current date:
    ```bash
-   python3 timeline_version_up.py "Scene_{n}_{date}"
+   python3 timeline_version_up.py "{version+1}_{current_date}"
    ```
-   Creates e.g., "Scene_1_2024-03-20"
+   Converts e.g., "Timeline_v001_2025-03-20" to "Timeline_v002_2025-03-21"
+   Also works with other date formats:
+   - "Timeline_v001_20-03-2025" → "Timeline_v002_2025-03-21"
+   - "Timeline_v001_03/20/2025" → "Timeline_v002_2025-03-21"
+
+2. Add sequence number and current date:
+   ```bash
+   python3 timeline_version_up.py "Scene_{n}_{current_date}"
+   ```
+   Creates e.g., "Scene_1_2025-03-21"
 
 ## How It Works
 1. The script connects to DaVinci Resolve
 2. Reads selected items from the Media Pool
 3. For each selected item:
    - Checks if it's a timeline
-   - Processes version operations
+   - Processes version operations (removes existing dates)
    - Replaces placeholders
    - Renames the timeline
 
@@ -80,11 +98,14 @@ The script uses Python's logging system with the following levels:
 - Works only with timelines (other media types are skipped)
 - Requires DaVinci Resolve Studio with scripting enabled
 - Version numbers must be in format "v001", "V2", or "version1"
+- Date formats must match one of the supported patterns
 
 ## Tips
 - Test new naming patterns with a single item first
 - Use logging output for troubleshooting
 - Backup important timelines before renaming
+- The script automatically removes existing dates when using {current_date}
+- When using dates, stick to the supported formats for best results
 
 ## License
 MIT License - See LICENSE file for details
@@ -96,15 +117,20 @@ Contributions are welcome! Please create a pull request or open an issue for sug
 - Only works with DaVinci Resolve Studio (not the free version)
 - Requires scripting to be enabled in DaVinci Resolve
 
-## Changelog
-### v1.0.0 (2025-06-14)
-- Initial release
-- Basic version management
-- Placeholder system
-- Logging integration
-
 ## Support
 For problems or questions:
 1. Check the documentation
 2. Search for similar issues
 3. Create a new issue with detailed error description
+
+## Changelog
+### v0.1.0 (2025-06-14)
+- Added intelligent date handling
+- Improved version processing
+- Fixed name duplication issues
+- Updated placeholder system
+- Added support for multiple date formats
+- Initial release
+- Basic version management
+- Placeholder system
+- Logging integration
