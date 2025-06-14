@@ -6,30 +6,34 @@
 
 A Python script for automatic version management of timelines in DaVinci Resolve Studio. This script enables renaming of timelines in the DaVinci Resolve Media Pool and automatically increments version numbers in timeline names.
 
+## Quick Start
+1. [Install Python](#step-1-install-python)
+2. [Enable Scripting in DaVinci Resolve](#step-2-enable-scripting-in-davinci-resolve)
+3. [Run the Script](#step-4-run-the-script)
+
 ## Features
-- Automatic timeline versioning
+### Core Functionality
+- Automatic timeline versioning and duplication
 - Flexible naming patterns with placeholders
 - Support for various version formats
-- Intelligent date handling (removes existing dates)
+- Intelligent date handling
+
+### Organization
+- Automatic version folder creation and management
+- Recursive folder hierarchy navigation
+- Maintains project folder structure
+
+### Technical Features
 - Advanced logging with rotation and file output
 - Pattern validation and error checking
 - Type-safe implementation with Python type hints
 - Resource cleanup and proper error handling
 - Detailed operation summaries
-- Automatic timeline duplication with version+1
-- Automatic version folder creation and management
-- Recursive folder hierarchy navigation
-- Detailed logging of folder operations
+
+### System Integration
 - Improved DaVinciResolveScript import handling
 - Global module availability
 - Enhanced error handling for imports
-
-## Donate
-Thanks for using this script — I hope it helped with your work!  
-If it saved you time or proved useful, consider donating a coffee.  
-Your support helps keep the project going.
-
-[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
 ## Prerequisites
 - DaVinci Resolve Studio (with scripting enabled)
@@ -48,25 +52,82 @@ The script automatically searches for the DaVinciResolveScript module in standar
 - Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules`
 - Linux: `/opt/resolve/Developer/Scripting/Modules`
 
-You can also set the PYTHONPATH environment variable to include the DaVinciResolveScript module path:
-```bash
-# macOS
-export PYTHONPATH="/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules:$PYTHONPATH"
+## How to Use - Step by Step Guide
 
-# Windows
-set PYTHONPATH=%PROGRAMDATA%\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules;%PYTHONPATH%
+### Step 1: Install Python
+#### On Mac:
+1. Visit the official Python website: https://www.python.org/downloads/
+2. Click the "Download Python" button (get the latest version, 3.6 or higher)
+3. Open the downloaded .pkg installer
+4. Follow the installation wizard:
+   - Click "Continue" through the introduction
+   - Accept the license agreement
+   - Click "Install" (you may need to enter your password)
+   - Wait for the installation to complete
+5. Verify the installation by opening Terminal (you can find it using Spotlight search - press `Cmd + Space` and type "Terminal") and typing:
+   ```bash
+   python3 --version
+   ```
+   You should see the Python version number displayed
 
-# Linux
-export PYTHONPATH=/opt/resolve/Developer/Scripting/Modules:$PYTHONPATH
-```
+#### On Windows:
+1. Visit the official Python website: https://www.python.org/downloads/
+2. Click the "Download Python" button (get the latest version, 3.6 or higher)
+3. Run the downloaded .exe installer
+4. Important: Check the box that says "Add Python to PATH" during installation
+5. Click "Install Now" and wait for the installation to complete
+6. Verify the installation by opening Command Prompt (press `Windows + R`, type "cmd" and press Enter) and typing:
+   ```bash
+   python --version
+   ```
+   You should see the Python version number displayed
 
-## Tested
-This script was tested on macOS 15 with DVR Studio version 19.
+### Step 2: Enable Scripting in DaVinci Resolve
+1. Open DaVinci Resolve Studio
+2. Go to `DaVinci Resolve` > `Preferences` (on Mac) or `File` > `Preferences` (on Windows)
+3. Click on `System` in the top
+4. Select `General` in the sidebar menu
+5. Set the dropdown for `External scripting using` to `Local` to enable scripting from your local Machine
+6. Click `Save` and restart DaVinci Resolve
 
-## Usage
-```bash
-python3 timeline_version_up.py "NewNamePattern"
-```
+### Step 3: Prepare Your Project
+1. Open your DaVinci Resolve project
+2. In the Media Pool, select the timelines you want to version up or modify
+3. Make sure you have a backup of your project
+
+### Step 4: Run the Script
+#### On Mac:
+1. Open Terminal
+2. Navigate to the folder containing the script using the `cd` command:
+   ```bash
+   cd /path/to/script/folder
+   ```
+3. Run the script with your desired naming pattern:
+   ```bash
+   python3 timeline_version_up.py "{version+1}_{current_date}"
+   ```
+4. Observe in Resolve whats happening. Don't use Resolve while the script is running.
+
+#### On Windows:
+1. Open Command Prompt
+2. Navigate to the folder containing the script:
+   ```bash
+   cd C:\path\to\script\folder
+   ```
+3. Run the script with your desired naming pattern:
+   ```bash
+   python timeline_version_up.py "{version+1}_{current_date}"
+   ```
+4. Observe in Resolve whats happening. Don't use Resolve while the script is running.
+
+### Step 5: Verify the Results
+1. Return to DaVinci Resolve
+2. Check the Media Pool for:
+   - The new version of your timeline
+   - The new version folder (if using {version+1})
+   - The updated timeline name with the new version number and date
+
+## Usage Guide
 
 ### Available Placeholders
 - `{n}`         - Sequential number
@@ -75,12 +136,21 @@ python3 timeline_version_up.py "NewNamePattern"
 - `{version+1}` - Increment version number by 1 and duplicate the timeline
 - `{version-1}` - Decrement version number by 1
 
-### Pattern Validation
-The script validates patterns before processing:
-- Checks for required placeholders
-- Validates balanced braces
-- Verifies placeholder names
-- Ensures proper pattern syntax
+### Common Patterns to Try
+1. Simple version increment:
+   ```bash
+   python3 timeline_version_up.py "{version+1}"
+   ```
+
+2. Add current date:
+   ```bash
+   python3 timeline_version_up.py "{current_date}"
+   ```
+
+3. Combine version and date:
+   ```bash
+   python3 timeline_version_up.py "{version+1}_{current_date}"
+   ```
 
 ### Supported Date Formats
 The script can detect and remove the following date formats from timeline names:
@@ -91,50 +161,9 @@ The script can detect and remove the following date formats from timeline names:
 - DD/MM/YYYY (e.g., 21/03/2025)
 - MM/DD/YYYY (e.g., 03/21/2025)
 
-When using the `{current_date}` placeholder, the script will:
-1. Remove any existing date in any of the supported formats
-2. Add the current date in YYYY-MM-DD format
-3. Clean up any resulting double underscores or spaces
+## Technical Details
 
-### Timeline Duplication and Folder Management
-When using the `{version+1}` placeholder, the script will:
-1. Create a duplicate of the selected timeline
-2. Rename the duplicate with the incremented version number
-3. Create a new version folder at the same level as the original timeline's folder
-4. Move the duplicated timeline to the new folder
-5. Keep the original timeline unchanged
-
-The version folder naming follows these rules:
-- Uses the version number from the new timeline name
-- Example: If timeline is renamed to "Project_v3", creates folder "v3"
-- Creates the version folder at the same level as the original timeline's folder
-- Maintains the folder hierarchy structure
-
-This is useful for:
-- Creating new versions while preserving the original
-- Maintaining a version history in dedicated folders
-- Working on multiple versions simultaneously
-- Keeping the media pool organized
-- Preserving the project's folder structure
-
-### Examples
-1. Increment version number, duplicate timeline, and add current date:
-   ```bash
-   python3 timeline_version_up.py "{version+1}_{current_date}"
-   ```
-   Creates a duplicate timeline with incremented version number and current date:
-   - Original: "Timeline_v001_2025-03-20" (in original folder)
-   - New: "Timeline_v002_2025-03-21" (in "v002" folder at same level)
-
-2. Simple version increment with duplication:
-   ```bash
-   python3 timeline_version_up.py "{version+1}"
-   ```
-   Creates a duplicate timeline with incremented version number:
-   - Original: "Timeline_v001" (in original folder)
-   - New: "Timeline_v002" (in "v002" folder at same level)
-
-## How It Works
+### How It Works
 1. The script connects to DaVinci Resolve
 2. Validates the input pattern
 3. Reads selected items from the Media Pool
@@ -147,7 +176,7 @@ This is useful for:
    - Moves the duplicated timeline to the version folder
 5. Provides a detailed summary of operations
 
-## Error Handling
+### Error Handling
 - Specific exception handling for different error types
 - Detailed error messages with context
 - Proper resource cleanup in all cases
@@ -159,8 +188,7 @@ This is useful for:
 - Improved import error handling
 - Global module availability checks
 
-## Logging
-The script uses an advanced logging system with:
+### Logging System
 - Console output for immediate feedback
 - Rotating file logs (1MB size limit, 5 backup files)
 - Different formatters for console and file output
@@ -174,11 +202,12 @@ The script uses an advanced logging system with:
 - Hierarchy navigation tracking
 - Import status logging
 
-## Limitations
-- Works only with timelines (other media types are skipped)
-- Requires DaVinci Resolve Studio with scripting enabled
-- Version numbers must be in format "v001", "V2", or "version1"
-- Date formats must match one of the supported patterns
+## Troubleshooting
+If you encounter any issues:
+1. Check that DaVinci Resolve is running
+2. Verify that scripting is enabled in preferences
+3. Make sure you have selected a timeline in the Media Pool
+4. Check the log file in the script's folder for detailed error messages
 
 ## Tips
 - Test new naming patterns with a single item first
@@ -190,15 +219,11 @@ The script uses an advanced logging system with:
 - Check folder hierarchy in the log file if version folders aren't created as expected
 - Ensure DaVinciResolveScript module is properly installed and accessible
 
-## License
-MIT License - See LICENSE file for details
-
-## Contributing
-Contributions are welcome! Please create a pull request or open an issue for suggestions.
-
-## Known Issues
-- Only works with DaVinci Resolve Studio (not the free version)
-- Requires scripting to be enabled in DaVinci Resolve
+## Limitations
+- Works only with timelines (other media types are skipped)
+- Requires DaVinci Resolve Studio with scripting enabled
+- Version numbers must be in format "v001", "V2", or "version1"
+- Date formats must match one of the supported patterns
 
 ## Support
 For problems or questions:
@@ -206,6 +231,27 @@ For problems or questions:
 2. Search for similar issues
 3. Create a new issue with detailed error description
 4. Check the log file for detailed error information
+
+## Donate
+Thanks for using this script — I hope it helped with your work!  
+If it saved you time or proved useful, consider donating a coffee.  
+Your support helps keep the project going.
+
+[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
+
+## License
+MIT License - See LICENSE file for details
+
+## Contributing
+Contributions are welcome! Please create a pull request or open an issue for suggestions.
+
+## Roadmap
+The following features are on the list to implement;
+- Create new Timelines with Name Pattern and numbering
+
+## Known Issues
+- Only works with DaVinci Resolve Studio (not the free version)
+- Requires scripting to be enabled in DaVinci Resolve
 
 ## Changelog
 ### v0.2.3 (2025-06-14)
