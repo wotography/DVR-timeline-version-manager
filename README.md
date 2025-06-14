@@ -11,7 +11,11 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Flexible naming patterns with placeholders
 - Support for various version formats
 - Intelligent date handling (removes existing dates)
-- Detailed logging for troubleshooting
+- Advanced logging with rotation and file output
+- Pattern validation and error checking
+- Type-safe implementation with Python type hints
+- Resource cleanup and proper error handling
+- Detailed operation summaries
 
 ## Prerequisites
 - DaVinci Resolve Studio (with scripting enabled)
@@ -39,9 +43,15 @@ python3 timeline_version_up.py "NewNamePattern"
 - `{n}`         - Sequential number
 - `{original}`  - Original timeline name
 - `{current_date}` - Current date in YYYY-MM-DD format (removes any existing date)
-- `{version}`   - Version number from original name (e.g., "v001")
 - `{version+1}` - Increment version number by 1
 - `{version-1}` - Decrement version number by 1
+
+### Pattern Validation
+The script validates patterns before processing:
+- Checks for required placeholders
+- Validates balanced braces
+- Verifies placeholder names
+- Ensures proper pattern syntax
 
 ### Supported Date Formats
 The script can detect and remove the following date formats from timeline names:
@@ -75,24 +85,34 @@ When using the `{current_date}` placeholder, the script will:
 
 ## How It Works
 1. The script connects to DaVinci Resolve
-2. Reads selected items from the Media Pool
-3. For each selected item:
+2. Validates the input pattern
+3. Reads selected items from the Media Pool
+4. For each selected item:
    - Checks if it's a timeline
    - Processes version operations (removes existing dates)
    - Replaces placeholders
    - Renames the timeline
+5. Provides a detailed summary of operations
 
 ## Error Handling
-- All actions and errors are logged
-- Detailed error messages are provided
-- A summary of processed items is displayed at the end
+- Specific exception handling for different error types
+- Detailed error messages with context
+- Proper resource cleanup in all cases
+- Operation summaries with success/failure counts
+- Pattern validation before processing
+- Type checking and validation
 
 ## Logging
-The script uses Python's logging system with the following levels:
-- INFO: Normal operations and success messages
-- WARNING: Non-critical issues
-- ERROR: Processing errors
-- CRITICAL: Severe errors (e.g., no connection to Resolve)
+The script uses an advanced logging system with:
+- Console output for immediate feedback
+- Rotating file logs (1MB size limit, 5 backup files)
+- Different formatters for console and file output
+- Multiple log levels:
+  - INFO: Normal operations and success messages
+  - WARNING: Non-critical issues
+  - ERROR: Processing errors
+  - CRITICAL: Severe errors (e.g., no connection to Resolve)
+- Timestamp and context information in file logs
 
 ## Limitations
 - Works only with timelines (other media types are skipped)
@@ -102,10 +122,11 @@ The script uses Python's logging system with the following levels:
 
 ## Tips
 - Test new naming patterns with a single item first
-- Use logging output for troubleshooting
+- Check the log file for detailed operation history
 - Backup important timelines before renaming
 - The script automatically removes existing dates when using {current_date}
 - When using dates, stick to the supported formats for best results
+- Monitor the log file for troubleshooting
 
 ## License
 MIT License - See LICENSE file for details
@@ -122,14 +143,21 @@ For problems or questions:
 1. Check the documentation
 2. Search for similar issues
 3. Create a new issue with detailed error description
+4. Check the log file for detailed error information
 
 ## Changelog
-### v0.1.0 (2025-06-14)
+### v0.2.0 (2025-06-14)
 - Added intelligent date handling
 - Improved version processing
 - Fixed name duplication issues
 - Updated placeholder system
 - Added support for multiple date formats
+- Added pattern validation
+- Improved error handling with specific exceptions
+- Added rotating file logging
+- Added type hints and improved documentation
+- Added resource cleanup
+- Added operation summaries
 - Initial release
 - Basic version management
 - Placeholder system
