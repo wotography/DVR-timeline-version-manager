@@ -40,6 +40,10 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Python 3.6 or higher
 - DaVinciResolveScript module
 
+## Tested Systems
+This script was tested on macOS 15.5 with DVR Studio version 19.1.4 BUILD 11.
+Please report your system specs if you successfully run the script to help others verify compatibility.
+
 ## Installation
 
 1. Ensure DaVinci Resolve Studio is installed with scripting enabled
