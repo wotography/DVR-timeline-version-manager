@@ -59,9 +59,15 @@ def extract_version(original_name):
 
 def process_version(original_name, operation):
     """Processes version number based on the requested operation"""
-    version = extract_version(original_name)
+    # First remove any existing date
+    name_without_date = re.sub(r'\d{4}-\d{2}-\d{2}', '', original_name)
+    name_without_date = re.sub(r'_+', '_', name_without_date)
+    name_without_date = name_without_date.strip(' _')
+    
+    # Then process version
+    version = extract_version(name_without_date)
     if version is None:
-        logging.info(f"No version number found in {original_name}, skipping item")
+        logging.info(f"No version number found in {name_without_date}, skipping item")
         return None
     
     if operation == "+1":
@@ -73,7 +79,7 @@ def process_version(original_name, operation):
         return None
     
     # Replaces version number in original name while maintaining original format
-    new_name = re.sub(r'[vV](?:ersion)?\d+', f'v{new_version}', original_name)
+    new_name = re.sub(r'[vV](?:ersion)?\d+', f'v{new_version}', name_without_date)
     logging.debug(f"Version {operation}: {original_name} -> {new_name}")
     return new_name
 
@@ -94,6 +100,30 @@ def rename_timeline(timeline, new_name):
     except Exception as e:
         logging.error(f"Error renaming '{original_name}': {e}")
         return False
+
+def process_date(original_name):
+    """Processes date in the name - removes existing date if present and adds current date"""
+    # Common date patterns (YYYY-MM-DD, DD-MM-YYYY, MM-DD-YYYY, etc.)
+    date_patterns = [
+        r'\d{4}-\d{2}-\d{2}',  # YYYY-MM-DD
+        r'\d{2}-\d{2}-\d{4}',  # DD-MM-YYYY or MM-DD-YYYY
+        r'\d{2}/\d{2}/\d{4}',  # DD/MM/YYYY or MM/DD/YYYY
+        r'\d{4}/\d{2}/\d{2}'   # YYYY/MM/DD
+    ]
+    
+    # Remove any existing date
+    name_without_date = original_name
+    for pattern in date_patterns:
+        name_without_date = re.sub(pattern, '', name_without_date)
+    
+    # Clean up any resulting double spaces or dashes
+    name_without_date = re.sub(r'\s+', ' ', name_without_date)
+    name_without_date = re.sub(r'-+', '-', name_without_date)
+    name_without_date = name_without_date.strip(' -')
+    
+    # Add current date
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    return f"{name_without_date} {current_date}".strip()
 
 def main():
     # Check command line arguments
@@ -129,9 +159,6 @@ def main():
         
     logging.info(f"Found {len(selected_items)} selected items")
     
-    # Get current date for {date} placeholder
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    
     # Rename each item
     success_count = 0
     skipped_count = 0
@@ -145,29 +172,49 @@ def main():
         original_name = item.GetName()
         try:
             # Process version operations first
-            processed_pattern = pattern
-            version_operations = re.finditer(r"{version([+-]1)}", pattern)
+            version_name = original_name
             skip_item = False
             
+            # Handle version operations
+            version_operations = re.finditer(r"{version([+-]1)}", pattern)
             for match in version_operations:
                 operation = match.group(1)
-                processed_name = process_version(original_name, operation)
-                if processed_name is None:
+                version_result = process_version(version_name, operation)
+                if version_result is None:
                     skip_item = True
                     skipped_count += 1
                     break
-                logging.info(f"Version operation {operation}: {original_name} -> {processed_name}")
-                processed_pattern = processed_pattern.replace(match.group(0), processed_name)
+                version_name = version_result
+                logging.info(f"Version operation {operation}: {original_name} -> {version_name}")
             
             if skip_item:
                 continue
             
-            # Replace remaining placeholders
-            new_name = processed_pattern.format(
-                n=idx,
-                original=original_name,
-                date=date_str
-            )
+            # Get the base name without version and date
+            base_name = re.sub(r'v\d+', '', original_name)
+            base_name = re.sub(r'\d{4}-\d{2}-\d{2}', '', base_name)
+            base_name = re.sub(r'_+', '_', base_name)
+            base_name = base_name.strip(' _')
+            
+            # Get current date
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            
+            # Build the new name
+            if pattern == "{version+1}_{current_date}":
+                new_name = f"{version_name}_{current_date}"
+            else:
+                # Handle other patterns if needed
+                new_name = pattern.format(
+                    n=idx,
+                    original=original_name,
+                    current_date=current_date
+                )
+            
+            # Clean up any double underscores or spaces
+            new_name = re.sub(r'_+', '_', new_name)
+            new_name = re.sub(r'\s+', ' ', new_name)
+            new_name = new_name.strip(' _')
+            
             logging.info(f"Final new name: {new_name}")
             
             # Find and rename timeline
