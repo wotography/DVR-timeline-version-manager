@@ -16,6 +16,7 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Type-safe implementation with Python type hints
 - Resource cleanup and proper error handling
 - Detailed operation summaries
+- Automatic timeline duplication with version+1
 
 ## Prerequisites
 - DaVinci Resolve Studio (with scripting enabled)
@@ -43,7 +44,7 @@ python3 timeline_version_up.py "NewNamePattern"
 - `{n}`         - Sequential number
 - `{original}`  - Original timeline name
 - `{current_date}` - Current date in YYYY-MM-DD format (removes any existing date)
-- `{version+1}` - Increment version number by 1
+- `{version+1}` - Increment version number by 1 and duplicate the timeline
 - `{version-1}` - Decrement version number by 1
 
 ### Pattern Validation
@@ -67,21 +68,33 @@ When using the `{current_date}` placeholder, the script will:
 2. Add the current date in YYYY-MM-DD format
 3. Clean up any resulting double underscores or spaces
 
+### Timeline Duplication
+When using the `{version+1}` placeholder, the script will:
+1. Create a duplicate of the selected timeline
+2. Rename the duplicate with the incremented version number
+3. Keep the original timeline unchanged
+
+This is useful for:
+- Creating new versions while preserving the original
+- Maintaining a version history
+- Working on multiple versions simultaneously
+
 ### Examples
-1. Increment version number and add current date:
+1. Increment version number, duplicate timeline, and add current date:
    ```bash
    python3 timeline_version_up.py "{version+1}_{current_date}"
    ```
-   Converts e.g., "Timeline_v001_2025-03-20" to "Timeline_v002_2025-03-21"
-   Also works with other date formats:
-   - "Timeline_v001_20-03-2025" → "Timeline_v002_2025-03-21"
-   - "Timeline_v001_03/20/2025" → "Timeline_v002_2025-03-21"
+   Creates a duplicate timeline with incremented version number and current date:
+   - Original: "Timeline_v001_2025-03-20"
+   - New: "Timeline_v002_2025-03-21"
 
-2. Add sequence number and current date:
+2. Simple version increment with duplication:
    ```bash
-   python3 timeline_version_up.py "Scene_{n}_{current_date}"
+   python3 timeline_version_up.py "{version+1}"
    ```
-   Creates e.g., "Scene_1_2025-03-21"
+   Creates a duplicate timeline with incremented version number:
+   - Original: "Timeline_v001"
+   - New: "Timeline_v002"
 
 ## How It Works
 1. The script connects to DaVinci Resolve
@@ -147,17 +160,23 @@ For problems or questions:
 
 ## Changelog
 ### v0.2.0 (2025-06-14)
-- Added intelligent date handling
-- Improved version processing
-- Fixed name duplication issues
-- Updated placeholder system
-- Added support for multiple date formats
+- Added automatic timeline duplication with version+1
+- Improved error handling for timeline operations
+- Added type hints for timeline functions
+- Enhanced logging for timeline operations
 - Added pattern validation
 - Improved error handling with specific exceptions
 - Added rotating file logging
 - Added type hints and improved documentation
 - Added resource cleanup
 - Added operation summaries
+
+### v0.1.0 (2025-06-14)
+- Added intelligent date handling
+- Improved version processing
+- Fixed name duplication issues
+- Updated placeholder system
+- Added support for multiple date formats
 - Initial release
 - Basic version management
 - Placeholder system
