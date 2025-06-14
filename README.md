@@ -17,6 +17,12 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Resource cleanup and proper error handling
 - Detailed operation summaries
 - Automatic timeline duplication with version+1
+- Automatic version folder creation and management
+- Recursive folder hierarchy navigation
+- Detailed logging of folder operations
+- Improved DaVinciResolveScript import handling
+- Global module availability
+- Enhanced error handling for imports
 
 ## Prerequisites
 - DaVinci Resolve Studio (with scripting enabled)
@@ -34,6 +40,18 @@ The script automatically searches for the DaVinciResolveScript module in standar
 - macOS: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules`
 - Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules`
 - Linux: `/opt/resolve/Developer/Scripting/Modules`
+
+You can also set the PYTHONPATH environment variable to include the DaVinciResolveScript module path:
+```bash
+# macOS
+export PYTHONPATH="/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules:$PYTHONPATH"
+
+# Windows
+set PYTHONPATH=%PROGRAMDATA%\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules;%PYTHONPATH%
+
+# Linux
+export PYTHONPATH=/opt/resolve/Developer/Scripting/Modules:$PYTHONPATH
+```
 
 ## Usage
 ```bash
@@ -68,16 +86,26 @@ When using the `{current_date}` placeholder, the script will:
 2. Add the current date in YYYY-MM-DD format
 3. Clean up any resulting double underscores or spaces
 
-### Timeline Duplication
+### Timeline Duplication and Folder Management
 When using the `{version+1}` placeholder, the script will:
 1. Create a duplicate of the selected timeline
 2. Rename the duplicate with the incremented version number
-3. Keep the original timeline unchanged
+3. Create a new version folder at the same level as the original timeline's folder
+4. Move the duplicated timeline to the new folder
+5. Keep the original timeline unchanged
+
+The version folder naming follows these rules:
+- Uses the version number from the new timeline name
+- Example: If timeline is renamed to "Project_v3", creates folder "v3"
+- Creates the version folder at the same level as the original timeline's folder
+- Maintains the folder hierarchy structure
 
 This is useful for:
 - Creating new versions while preserving the original
-- Maintaining a version history
+- Maintaining a version history in dedicated folders
 - Working on multiple versions simultaneously
+- Keeping the media pool organized
+- Preserving the project's folder structure
 
 ### Examples
 1. Increment version number, duplicate timeline, and add current date:
@@ -85,16 +113,16 @@ This is useful for:
    python3 timeline_version_up.py "{version+1}_{current_date}"
    ```
    Creates a duplicate timeline with incremented version number and current date:
-   - Original: "Timeline_v001_2025-03-20"
-   - New: "Timeline_v002_2025-03-21"
+   - Original: "Timeline_v001_2025-03-20" (in original folder)
+   - New: "Timeline_v002_2025-03-21" (in "v002" folder at same level)
 
 2. Simple version increment with duplication:
    ```bash
    python3 timeline_version_up.py "{version+1}"
    ```
    Creates a duplicate timeline with incremented version number:
-   - Original: "Timeline_v001"
-   - New: "Timeline_v002"
+   - Original: "Timeline_v001" (in original folder)
+   - New: "Timeline_v002" (in "v002" folder at same level)
 
 ## How It Works
 1. The script connects to DaVinci Resolve
@@ -104,7 +132,9 @@ This is useful for:
    - Checks if it's a timeline
    - Processes version operations (removes existing dates)
    - Replaces placeholders
-   - Renames the timeline
+   - Duplicates the timeline if needed
+   - Creates a version folder at the correct level
+   - Moves the duplicated timeline to the version folder
 5. Provides a detailed summary of operations
 
 ## Error Handling
@@ -114,6 +144,10 @@ This is useful for:
 - Operation summaries with success/failure counts
 - Pattern validation before processing
 - Type checking and validation
+- Detailed logging of folder operations
+- Graceful handling of folder hierarchy navigation
+- Improved import error handling
+- Global module availability checks
 
 ## Logging
 The script uses an advanced logging system with:
@@ -126,6 +160,9 @@ The script uses an advanced logging system with:
   - ERROR: Processing errors
   - CRITICAL: Severe errors (e.g., no connection to Resolve)
 - Timestamp and context information in file logs
+- Detailed folder operation logging
+- Hierarchy navigation tracking
+- Import status logging
 
 ## Limitations
 - Works only with timelines (other media types are skipped)
@@ -140,6 +177,8 @@ The script uses an advanced logging system with:
 - The script automatically removes existing dates when using {current_date}
 - When using dates, stick to the supported formats for best results
 - Monitor the log file for troubleshooting
+- Check folder hierarchy in the log file if version folders aren't created as expected
+- Ensure DaVinciResolveScript module is properly installed and accessible
 
 ## License
 MIT License - See LICENSE file for details
@@ -159,6 +198,28 @@ For problems or questions:
 4. Check the log file for detailed error information
 
 ## Changelog
+### v0.2.3 (2025-06-14)
+- Improved DaVinciResolveScript import handling
+- Moved import to module level for global availability
+- Enhanced error handling for imports
+- Added import status logging
+- Updated documentation with import instructions
+
+### v0.2.2 (2025-06-14)
+- Added recursive folder hierarchy navigation
+- Improved version folder creation logic
+- Enhanced folder operation logging
+- Added detailed folder hierarchy tracking
+- Fixed parent folder detection
+- Improved error handling for folder operations
+
+### v0.2.1 (2025-06-14)
+- Added automatic version folder creation
+- Added timeline movement to version folders
+- Improved folder naming logic
+- Enhanced error handling for folder operations
+- Added folder management documentation
+
 ### v0.2.0 (2025-06-14)
 - Added automatic timeline duplication with version+1
 - Improved error handling for timeline operations
