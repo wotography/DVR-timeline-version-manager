@@ -24,6 +24,13 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 - Global module availability
 - Enhanced error handling for imports
 
+## Donate
+Thanks for using this script — I hope it helped with your work!  
+If it saved you time or proved useful, consider donating a coffee.  
+Your support helps keep the project going.
+
+[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
+
 ## Prerequisites
 - DaVinci Resolve Studio (with scripting enabled)
 - Python 3.6 or higher
@@ -52,6 +59,9 @@ set PYTHONPATH=%PROGRAMDATA%\Blackmagic Design\DaVinci Resolve\Support\Developer
 # Linux
 export PYTHONPATH=/opt/resolve/Developer/Scripting/Modules:$PYTHONPATH
 ```
+
+## Tested
+This script was tested on macOS 15 with DVR Studio version 19.
 
 ## Usage
 ```bash
