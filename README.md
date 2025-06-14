@@ -97,7 +97,7 @@ Contributions are welcome! Please create a pull request or open an issue for sug
 - Requires scripting to be enabled in DaVinci Resolve
 
 ## Changelog
-### v1.0.0 (2024-03-20)
+### v1.0.0 (2025-06-14)
 - Initial release
 - Basic version management
 - Placeholder system
