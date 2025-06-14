@@ -1,4 +1,4 @@
-# VERSION: v0.1.0 (2025-06-14)
+# VERSION: v0.2.0 (2025-06-14)
 
 import sys
 import os
@@ -180,22 +180,41 @@ def process_version(original_name: str, operation: str) -> str | None:
     logging.debug(f"Version {operation}: {original_name} -> {new_name}")
     return new_name
 
-def rename_timeline(timeline, new_name):
-    """Renames a timeline"""
+def rename_timeline(timeline, new_name: str, should_duplicate: bool = False) -> bool:
+    """Renames a timeline and optionally duplicates it.
+    
+    Args:
+        timeline: The timeline to rename
+        new_name: The new name for the timeline
+        should_duplicate: Whether to duplicate the timeline before renaming
+        
+    Returns:
+        bool: True if operation was successful, False otherwise
+    """
     original_name = timeline.GetName()
     try:
-        logging.info(f"Renaming timeline: {original_name}")
-        result = timeline.SetName(new_name)
-            
-        if result:
-            logging.info(f"Successfully renamed: '{original_name}' → '{new_name}'")
-            return True
+        if should_duplicate:
+            logging.info(f"Duplicating timeline: {original_name}")
+            duplicated_timeline = timeline.DuplicateTimeline(new_name)
+            if duplicated_timeline:
+                logging.info(f"Successfully duplicated and renamed: '{original_name}' → '{new_name}'")
+                return True
+            else:
+                logging.error(f"Failed to duplicate timeline '{original_name}'")
+                return False
         else:
-            logging.error(f"Failed to rename '{original_name}'")
-            return False
+            logging.info(f"Renaming timeline: {original_name}")
+            result = timeline.SetName(new_name)
+            
+            if result:
+                logging.info(f"Successfully renamed: '{original_name}' → '{new_name}'")
+                return True
+            else:
+                logging.error(f"Failed to rename '{original_name}'")
+                return False
             
     except Exception as e:
-        logging.error(f"Error renaming '{original_name}': {e}")
+        logging.error(f"Error processing timeline '{original_name}': {e}")
         return False
 
 def process_date(original_name):
@@ -286,9 +305,12 @@ def main():
                     if new_name is None:
                         skipped_count += 1
                         continue
+                    # For version+1, we want to duplicate the timeline
+                    should_duplicate = True
                 else:
                     # Process the pattern
                     processed_pattern = pattern
+                    should_duplicate = False
                     
                     # Handle version operations in the pattern
                     version_match = re.search(r"{version([+-]1)}", processed_pattern)
@@ -299,6 +321,8 @@ def main():
                             skipped_count += 1
                             continue
                         processed_pattern = processed_pattern.replace(version_match.group(0), version_result)
+                        # Only duplicate if it's version+1
+                        should_duplicate = operation == "+1"
                     
                     # Handle other placeholders
                     try:
@@ -322,7 +346,7 @@ def main():
                 # Find and rename timeline
                 timeline = find_timeline_by_name(project, original_name)
                 if timeline:
-                    if rename_timeline(timeline, new_name):
+                    if rename_timeline(timeline, new_name, should_duplicate):
                         success_count += 1
                 else:
                     logging.error(f"Could not find timeline '{original_name}'")
