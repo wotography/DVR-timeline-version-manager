@@ -176,7 +176,7 @@ The script can detect and remove the following date formats from timeline names:
    - Processes version operations (removes existing dates)
    - Replaces placeholders
    - Duplicates the timeline if needed
-   - Creates a version folder at the correct level
+   - Creates a version folder at the same level
    - Moves the duplicated timeline to the version folder
 5. Provides a detailed summary of operations
 
