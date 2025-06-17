@@ -250,7 +250,9 @@ MIT License - See LICENSE file for details
 Contributions are welcome! Please create a pull request or open an issue for suggestions.
 
 ## Roadmap
-The following features are on the list to implement;
+The following features are on the list to implement:
+- Add current date to new created folders
+- Add option for `version+1` without new folder creation
 - Create new Timelines with Name Pattern and numbering
 
 ## Known Issues
