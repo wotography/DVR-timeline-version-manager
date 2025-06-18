@@ -260,6 +260,9 @@ The following features are on the list to implement:
 - Requires scripting to be enabled in DaVinci Resolve
 
 ## Changelog
+### v0.2.4 (2025-06-18)
+- Replaced two characters for better compatibility
+
 ### v0.2.3 (2025-06-14)
 - Improved DaVinciResolveScript import handling
 - Moved import to module level for global availability
