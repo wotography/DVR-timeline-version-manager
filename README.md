@@ -6,6 +6,8 @@
 
 A Python script for automatic version management of timelines in DaVinci Resolve Studio. This script enables renaming of timelines in the DaVinci Resolve Media Pool and automatically increments version numbers in timeline names.
 
+A German language intoduction for Terminal beginners can be found [here](Anleitung_fuer_Terminal_Anfaenger.md).
+
 ## Quick Start
 1. [Install Python](#step-1-install-python)
 2. [Enable Scripting in DaVinci Resolve](#step-2-enable-scripting-in-davinci-resolve)
