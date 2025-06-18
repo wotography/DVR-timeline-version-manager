@@ -234,7 +234,7 @@ def rename_timeline(timeline: Any, new_name: str, should_duplicate: bool = False
             logging.info(f"Duplicating timeline: {original_name}")
             duplicated_timeline = timeline.DuplicateTimeline(new_name)
             if duplicated_timeline:
-                logging.info(f"Successfully duplicated and renamed: '{original_name}' → '{new_name}'")
+                logging.info(f"Successfully duplicated and renamed: '{original_name}' -> '{new_name}'")
                 
                 # If we have a media pool, create a version folder and move the timeline
                 if media_pool:
@@ -277,7 +277,7 @@ def rename_timeline(timeline: Any, new_name: str, should_duplicate: bool = False
             result = timeline.SetName(new_name)
             
             if result:
-                logging.info(f"Successfully renamed: '{original_name}' → '{new_name}'")
+                logging.info(f"Successfully renamed: '{original_name}' -> '{new_name}'")
                 return True
             else:
                 logging.error(f"Failed to rename '{original_name}'")
