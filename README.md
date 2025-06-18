@@ -44,6 +44,13 @@ A Python script for automatic version management of timelines in DaVinci Resolve
 This script was tested on macOS 15.5 with DVR Studio version 19.1.4 BUILD 11.
 Please report your system specs if you successfully run the script to help others verify compatibility.
 
+## Donate
+Thanks for using this script — I hope it helped with your work!  
+If it saved you time or proved useful, consider donating a coffee.  
+Your support helps keep the project going.
+
+[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
+
 ## Installation
 
 1. Ensure DaVinci Resolve Studio is installed with scripting enabled
@@ -235,13 +242,6 @@ For problems or questions:
 2. Search for similar issues
 3. Create a new issue with detailed error description
 4. Check the log file for detailed error information
-
-## Donate
-Thanks for using this script — I hope it helped with your work!  
-If it saved you time or proved useful, consider donating a coffee.  
-Your support helps keep the project going.
-
-[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
 ## License
 MIT License - See LICENSE file for details
