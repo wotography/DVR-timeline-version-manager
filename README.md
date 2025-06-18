@@ -262,6 +262,8 @@ The following features are on the list to implement:
 ## Changelog
 ### v0.2.4 (2025-06-18)
 - Replaced two characters for better compatibility
+- Added python compatibilty checks
+- Added UTF8 type encoding
 
 ### v0.2.3 (2025-06-14)
 - Improved DaVinciResolveScript import handling

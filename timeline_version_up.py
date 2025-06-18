@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
 # VERSION: v0.2.4 (2025-06-14)
 
 import sys
+
+# Check Python version
+if sys.version_info < (3, 6):
+    print("Error: This script requires Python 3.6 or higher")
+    sys.exit(1)
+
 import os
 import logging
 import re
