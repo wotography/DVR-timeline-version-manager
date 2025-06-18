@@ -229,6 +229,7 @@ If you encounter any issues:
 - Monitor the log file for troubleshooting
 - Check folder hierarchy in the log file if version folders aren't created as expected
 - Ensure DaVinciResolveScript module is properly installed and accessible
+- Always use standard straight quotes (") instead of curly quotes ("") or other special quotation marks when running commands
 
 ## Limitations
 - Works only with timelines (other media types are skipped)
