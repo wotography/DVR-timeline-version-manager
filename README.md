@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 
-A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Supports both a graphical Lua GUI script (for use inside Resolve) and a Python CLI script (for advanced/automated workflows).
+A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Supports both a graphical Lua GUI script (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
 ---
 
@@ -20,7 +20,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 ---
 
 ## Instructions for Python legacy CLI version
-For more detailed, python script-specific, instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained).
+For more detailed python script-specific instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
 
 ---
 
