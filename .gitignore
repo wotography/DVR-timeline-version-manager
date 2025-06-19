@@ -5,4 +5,25 @@
 !timeline_version_up.*
 !README*.md
 !LICENSE
-!Anleitung_fuer_Terminal_Anfaenger.md
+
+# Whitelist Python legacy script directory and its contents
+!python-legacy-script/
+!python-legacy-script/timeline_version_up.py
+!python-legacy-script/README_py.md
+!python-legacy-script/LICENSE
+!python-legacy-script/Anleitung_fuer_Terminal_Anfaenger.md
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
