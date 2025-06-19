@@ -2,7 +2,7 @@
 *
 
 # ... außer diesen vier Dateien
-!timeline_version_up.py
-!README.md
+!timeline_version_up.*
+!README*.md
 !LICENSE
 !Anleitung_fuer_Terminal_Anfaenger.md

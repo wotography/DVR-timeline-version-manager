@@ -4,47 +4,50 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 
-A Python script for automatic version management of timelines in DaVinci Resolve Studio. This script enables renaming of timelines in the DaVinci Resolve Media Pool and automatically increments version numbers in timeline names.
+A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Supports both a graphical Lua GUI script (for use inside Resolve) and a Python CLI script (for advanced/automated workflows).
 
-A German language intoduction for Terminal beginners can be found [here](Anleitung_fuer_Terminal_Anfaenger.md).
+---
 
-## Quick Start
-1. [Install Python](#step-1-install-python)
-2. [Enable Scripting in DaVinci Resolve](#step-2-enable-scripting-in-davinci-resolve)
-3. [Run the Script](#step-4-run-the-script)
+## Table of Contents
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Lua GUI Script](#lua-gui-script)
+  - [Python CLI Script](#python-cli-script)
+- [Features](#features)
+- [Troubleshooting](#troubleshooting)
+- [Changelog](#changelog)
+- [License](#license)
 
-## Features
-### Core Functionality
-- Automatic timeline versioning and duplication
-- Flexible naming patterns with placeholders
-- Support for various version formats
-- Intelligent date handling
+---
 
-### Organization
-- Automatic version folder creation and management
-- Recursive folder hierarchy navigation
-- Maintains project folder structure
+## Detailed Instructions
+For more detailed, script-specific instructions, see:
+- [Lua GUI Script Documentation](./README_lua.md) (recommended, actively maintained)
+- [Python CLI Script Documentation](./README_py.md) (legacy, not maintained)
 
-### Technical Features
-- Advanced logging with rotation and file output
-- Pattern validation and error checking
-- Type-safe implementation with Python type hints
-- Resource cleanup and proper error handling
-- Detailed operation summaries
+---
 
-### System Integration
-- Improved DaVinciResolveScript import handling
-- Global module availability
-- Enhanced error handling for imports
+## Overview
+This repository provides two powerful tools for managing timeline versions in DaVinci Resolve Studio:
+
+- **Lua GUI Script**: A graphical tool for batch versioning, renaming, and organizing timelines directly inside DaVinci Resolve Studio.
+- **Python CLI Script**: A command-line tool for advanced users, automation, and scripting outside of Resolve.
+
+Both tools support flexible version/date formats, automatic folder creation, and a range of customization options.
+
+> **Notice:** The Python script is no longer actively developed or maintained. For new projects and ongoing support, please use the Lua GUI script (`timeline_version_up.lua`).
+
+---
 
 ## Prerequisites
-- DaVinci Resolve Studio (with scripting enabled)
-- Python 3.6 or higher
-- DaVinciResolveScript module
+- **DaVinci Resolve Studio** (the free version does not support scripting)
+- **Scripting enabled** in Resolve Preferences (Preferences > System > General > External scripting using: Local)
+- **Operating System:** macOS, Windows, or Linux (where Resolve Studio is supported)
+- For Python script: **Python 3.6+** and the `DaVinciResolveScript` module
 
-## Tested Systems
-This script was tested on macOS 15.5 with DVR Studio version 19.1.4 BUILD 11.
-Please report your system specs if you successfully run the script to help others verify compatibility.
+---
 
 ## Donate
 Thanks for using this script — I hope it helped with your work!  
@@ -53,262 +56,93 @@ Your support helps keep the project going.
 
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
+---
+
 ## Installation
 
-1. Ensure DaVinci Resolve Studio is installed with scripting enabled
-2. Python 3.6 or higher must be installed
-3. Copy the script to any folder
-4. Ensure the DaVinciResolveScript module path is correctly configured
+### Lua GUI Script
+1. Download or copy `timeline_version_up.lua`.
+2. Place the file inside the Scripting Paths:
+MacOS: '/Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit'
+Windows: 'C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit'
+Linux: '/opt/resolve/Fusion/Scripts/Edit/' or '/home/resolve/Fusion/Scripts/Edit' depending on installation
+3. In DaVinci Resolve, open your project.
+4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 
-The script automatically searches for the DaVinciResolveScript module in standard paths:
-- macOS: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/Modules`
-- Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\Developer\Scripting\Modules`
-- Linux: `/opt/resolve/Developer/Scripting/Modules`
+### Python CLI Script
+1. Download or copy `timeline_version_up.py` to any folder.
+2. Ensure Python 3.6+ is installed (`python3 --version`).
+3. Ensure the `DaVinciResolveScript` module is available (see [Installation](#installation) in the Python section below).
 
-## How to Use - Step by Step Guide
+---
 
-### Step 1: Install Python
-#### On Mac:
-1. Visit the official Python website: https://www.python.org/downloads/
-2. Click the "Download Python" button (get the latest version, 3.6 or higher)
-3. Open the downloaded .pkg installer
-4. Follow the installation wizard:
-   - Click "Continue" through the introduction
-   - Accept the license agreement
-   - Click "Install" (you may need to enter your password)
-   - Wait for the installation to complete
-5. Verify the installation by opening Terminal (you can find it using Spotlight search - press `Cmd + Space` and type "Terminal") and typing:
-   ```bash
-   python3 --version
-   ```
-   You should see the Python version number displayed
+## Usage
 
-#### On Windows:
-1. Visit the official Python website: https://www.python.org/downloads/
-2. Click the "Download Python" button (get the latest version, 3.6 or higher)
-3. Run the downloaded .exe installer
-4. Important: Check the box that says "Add Python to PATH" during installation
-5. Click "Install Now" and wait for the installation to complete
-6. Verify the installation by opening Command Prompt (press `Windows + R`, type "cmd" and press Enter) and typing:
-   ```bash
-   python --version
-   ```
-   You should see the Python version number displayed
+### Lua GUI Script
+1. **Open DaVinci Resolve Studio** and load your project.
+2. In the **Media Pool**, select one or more timelines you want to version up or rename.
+3. Go to **Workspace > Scripts** and run `timeline_version_up.lua`.
+4. The GUI will appear with options for versioning, date formatting, folder creation, and more.
+5. Adjust the settings as needed:
+   - **Version +1:** Increment version number in timeline names.
+   - **Add/replace date:** Add or update the date in timeline names.
+   - **Append version if missing:** Add a version if none is present.
+   - **Create and move to new folders:** Duplicate timelines and move them to new folders based on your chosen scheme.
+   - **Name formatting:** Choose between spaces, underscores, or minuses.
+   - **Version and date formats:** Select from a wide range of formats.
+6. Click **Start renaming** to process the selected timelines. Progress and results will be shown in the log area.
+7. Review the Media Pool for new/renamed timelines and folders.
 
-### Step 2: Enable Scripting in DaVinci Resolve
-1. Open DaVinci Resolve Studio
-2. Go to `DaVinci Resolve` > `Preferences` (on Mac) or `File` > `Preferences` (on Windows)
-3. Click on `System` in the top
-4. Select `General` in the sidebar menu
-5. Set the dropdown for `External scripting using` to `Local` to enable scripting from your local Machine
-6. Click `Save` and restart DaVinci Resolve
-
-### Step 3: Prepare Your Project
-1. Open your DaVinci Resolve project
-2. In the Media Pool, select the timelines you want to version up or modify
-3. Make sure you have a backup of your project
-
-### Step 4: Run the Script
-#### On Mac:
-1. Open Terminal
-2. Navigate to the folder containing the script using the `cd` command:
-   ```bash
-   cd /path/to/script/folder
-   ```
-3. Run the script with your desired naming pattern:
+### Python CLI Script
+1. **Open DaVinci Resolve Studio** and load your project.
+2. In the **Media Pool**, select the timelines you want to version up or modify.
+3. Open a terminal and navigate to the folder containing `timeline_version_up.py`.
+4. Run the script with your desired naming pattern, e.g.:
    ```bash
    python3 timeline_version_up.py "{version+1}_{current_date}"
    ```
-4. Observe in Resolve whats happening. Don't use Resolve while the script is running.
+5. The script will process the selected timelines and print a summary/log to the console and a log file.
 
-#### On Windows:
-1. Open Command Prompt
-2. Navigate to the folder containing the script:
-   ```bash
-   cd C:\path\to\script\folder
-   ```
-3. Run the script with your desired naming pattern:
-   ```bash
-   python timeline_version_up.py "{version+1}_{current_date}"
-   ```
-4. Observe in Resolve whats happening. Don't use Resolve while the script is running.
+> **Notice:** The Python script is no longer actively developed or maintained. For new projects and ongoing support, please use the Lua GUI script (`timeline_version_up.lua`).
 
-### Step 5: Verify the Results
-1. Return to DaVinci Resolve
-2. Check the Media Pool for:
-   - The new version of your timeline
-   - The new version folder (if using {version+1})
-   - The updated timeline name with the new version number and date
+---
 
-## Usage Guide
+## Features
+- **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
+- **Command-Line Automation (Python)**: Flexible pattern-based renaming and versioning.
+- **Batch Processing**: Rename and version multiple timelines at once.
+- **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
+- **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
+- **Automatic Folder Creation**: Move new timelines to folders named by version, date, or both ("Version + Date").
+- **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
+- **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or log file).
+- **Advanced Pattern Placeholders (Python)**: Use `{n}`, `{original}`, `{current_date}`, `{version+1}`, `{version-1}` in naming patterns.
 
-### Available Placeholders
-- `{n}`         - Sequential number
-- `{original}`  - Original timeline name
-- `{current_date}` - Current date in YYYY-MM-DD format (removes any existing date)
-- `{version+1}` - Increment version number by 1 and duplicate the timeline
-- `{version-1}` - Decrement version number by 1
-
-### Common Patterns to Try
-1. Simple version increment:
-   ```bash
-   python3 timeline_version_up.py "{version+1}"
-   ```
-
-2. Add current date:
-   ```bash
-   python3 timeline_version_up.py "{current_date}"
-   ```
-
-3. Combine version and date:
-   ```bash
-   python3 timeline_version_up.py "{version+1}_{current_date}"
-   ```
-
-### Supported Date Formats
-The script can detect and remove the following date formats from timeline names:
-- YYYY-MM-DD (e.g., 2025-03-21)
-- DD-MM-YYYY (e.g., 21-03-2025)
-- MM-DD-YYYY (e.g., 03-21-2025)
-- YYYY/MM/DD (e.g., 2025/03/21)
-- DD/MM/YYYY (e.g., 21/03/2025)
-- MM/DD/YYYY (e.g., 03/21/2025)
-
-## Technical Details
-
-### How It Works
-1. The script connects to DaVinci Resolve
-2. Validates the input pattern
-3. Reads selected items from the Media Pool
-4. For each selected item:
-   - Checks if it's a timeline
-   - Processes version operations (removes existing dates)
-   - Replaces placeholders
-   - Duplicates the timeline if needed
-   - Creates a version folder at the same level
-   - Moves the duplicated timeline to the version folder
-5. Provides a detailed summary of operations
-
-### Error Handling
-- Specific exception handling for different error types
-- Detailed error messages with context
-- Proper resource cleanup in all cases
-- Operation summaries with success/failure counts
-- Pattern validation before processing
-- Type checking and validation
-- Detailed logging of folder operations
-- Graceful handling of folder hierarchy navigation
-- Improved import error handling
-- Global module availability checks
-
-### Logging System
-- Console output for immediate feedback
-- Rotating file logs (1MB size limit, 5 backup files)
-- Different formatters for console and file output
-- Multiple log levels:
-  - INFO: Normal operations and success messages
-  - WARNING: Non-critical issues
-  - ERROR: Processing errors
-  - CRITICAL: Severe errors (e.g., no connection to Resolve)
-- Timestamp and context information in file logs
-- Detailed folder operation logging
-- Hierarchy navigation tracking
-- Import status logging
+---
 
 ## Troubleshooting
-If you encounter any issues:
-1. Check that DaVinci Resolve is running
-2. Verify that scripting is enabled in preferences
-3. Make sure you have selected a timeline in the Media Pool
-4. Check the log file in the script's folder for detailed error messages
+- **Script not visible in menu?** Make sure the script folder is added in Workspace > Scripts > Add Script Location.
+- **No timelines processed?** Select timelines in the Media Pool before running the script.
+- **No GUI appears?** Ensure you are running the Lua script from within DaVinci Resolve Studio, not the free version.
+- **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
+- **Python errors?** Ensure Python 3.6+ is installed and the `DaVinciResolveScript` module is available.
+- **Still having issues?** Try restarting Resolve and ensure you are using the latest Studio version.
 
-## Tips
-- Test new naming patterns with a single item first
-- Check the log file for detailed operation history
-- Backup important timelines before renaming
-- The script automatically removes existing dates when using {current_date}
-- When using dates, stick to the supported formats for best results
-- Monitor the log file for troubleshooting
-- Check folder hierarchy in the log file if version folders aren't created as expected
-- Ensure DaVinciResolveScript module is properly installed and accessible
-- Always use standard straight quotes (") instead of curly quotes ("") or other special quotation marks when running commands
-
-## Limitations
-- Works only with timelines (other media types are skipped)
-- Requires DaVinci Resolve Studio with scripting enabled
-- Version numbers must be in format "v001", "V2", or "version1"
-- Date formats must match one of the supported patterns
-
-## Support
-For problems or questions:
-1. Check the documentation
-2. Search for similar issues
-3. Create a new issue with detailed error description
-4. Check the log file for detailed error information
-
-## License
-MIT License - See LICENSE file for details
-
-## Contributing
-Contributions are welcome! Please create a pull request or open an issue for suggestions.
-
-## Roadmap
-The following features are on the list to implement:
-- Add current date to new created folders
-- Add option for `version+1` without new folder creation
-- Create new Timelines with Name Pattern and numbering
-
-## Known Issues
-- Only works with DaVinci Resolve Studio (not the free version)
-- Requires scripting to be enabled in DaVinci Resolve
+---
 
 ## Changelog
-### v0.2.4 (2025-06-18)
-- Replaced two characters for better compatibility
-- Added python compatibilty checks
-- Added UTF8 type encoding
 
-### v0.2.3 (2025-06-14)
-- Improved DaVinciResolveScript import handling
-- Moved import to module level for global availability
-- Enhanced error handling for imports
-- Added import status logging
-- Updated documentation with import instructions
+### Lua Script
+#### v0.1.1 (2024-06-19)
+- Added support for version formats: Version1, Version01, Version001
+- Improved folder creation logic for "Version + Date" mode
+- Bugfixes and usability improvements
 
-### v0.2.2 (2025-06-14)
-- Added recursive folder hierarchy navigation
-- Improved version folder creation logic
-- Enhanced folder operation logging
-- Added detailed folder hierarchy tracking
-- Fixed parent folder detection
-- Improved error handling for folder operations
+#### v0.1.0
+- Initial release: GUI for timeline versioning, date formatting, folder creation, and batch renaming
 
-### v0.2.1 (2025-06-14)
-- Added automatic version folder creation
-- Added timeline movement to version folders
-- Improved folder naming logic
-- Enhanced error handling for folder operations
-- Added folder management documentation
+---
 
-### v0.2.0 (2025-06-14)
-- Added automatic timeline duplication with version+1
-- Improved error handling for timeline operations
-- Added type hints for timeline functions
-- Enhanced logging for timeline operations
-- Added pattern validation
-- Improved error handling with specific exceptions
-- Added rotating file logging
-- Added type hints and improved documentation
-- Added resource cleanup
-- Added operation summaries
-
-### v0.1.0 (2025-06-14)
-- Added intelligent date handling
-- Improved version processing
-- Fixed name duplication issues
-- Updated placeholder system
-- Added support for multiple date formats
-- Initial release
-- Basic version management
-- Placeholder system
-- Logging integration
+## License
+MIT License - See LICENSE file for details 
+ 
