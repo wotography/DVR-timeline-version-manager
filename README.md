@@ -43,6 +43,16 @@ Your support helps keep the project going.
 
 ## Installation
 
+### ⚠️ Disclaimer
+
+This tool is provided **as is** and **without any warranty** of any kind.  
+By using this script, you acknowledge that **you do so at your own risk**.  
+I do **not accept any responsibility or liability** for data loss, project corruption, or any other issues that may arise from its use.
+
+It is **strongly recommended** to create backups of your DaVinci Resolve projects before running the script.
+
+Use responsibly, and only if you understand what the script does and how it affects your project.
+
 ### Lua GUI Script
 1. Download or copy [timeline_version_up.lua](https://raw.githubusercontent.com/wotography/DVR-timeline-version-increments/main/timeline_version_up.lua).
 2. Place the file inside the Scripting Paths:
