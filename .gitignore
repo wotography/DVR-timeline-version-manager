@@ -1,4 +1,8 @@
-timeline_version_up.log
-timeline_version_up.lua
-EXIF-metadata.lua
-*.DS_Store
+# Alles ignorieren ...
+*
+
+# ... außer diesen vier Dateien
+!timeline_version_up.py
+!README.md
+!LICENSE
+!Anleitung_fuer_Terminal_Anfaenger.md
