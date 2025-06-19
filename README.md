@@ -99,6 +99,20 @@ Your support helps keep the project going.
 - **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
 - **Still having issues?** Open an Issue, add as much information as possible.
 
+## Roadmap
+
+### Planned Features
+1. **Enhanced Version Naming Options**
+   - Add new prefix options: "edit" or "Edit"
+   - Add letter-based versioning: "A" through "G"
+   - Example naming pattern: "edit A v1" or "Edit B v002"
+
+2. **Visual Status Indicator**
+   - Add a color-coded status indicator in the GUI:
+     - Orange: Ready to start
+     - Red: Error occurred
+     - Green: Successfully completed
+
 ## Changelog
 
 ### Lua Script
