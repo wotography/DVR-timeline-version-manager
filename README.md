@@ -25,7 +25,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 ## Detailed Instructions
 For more detailed, script-specific instructions, see:
 - [Lua GUI Script Documentation](./README_lua.md) (recommended, actively maintained)
-- [Python CLI Script Documentation](./README_py.md) (legacy, not maintained)
+- [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained)
 
 ---
 
@@ -63,9 +63,23 @@ Your support helps keep the project going.
 ### Lua GUI Script
 1. Download or copy `timeline_version_up.lua`.
 2. Place the file inside the Scripting Paths:
-MacOS: '/Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit'
-Windows: 'C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit'
-Linux: '/opt/resolve/Fusion/Scripts/Edit/' or '/home/resolve/Fusion/Scripts/Edit' depending on installation
+   - **macOS**:
+     ```
+     /Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit
+     ```
+   - **Windows**:
+     ```
+     C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit
+     ```
+   - **Linux**:
+     ```
+     /opt/resolve/Fusion/Scripts/Edit
+     ```
+     or
+     ```
+     /home/resolve/Fusion/Scripts/Edit
+     ```
+     depending on installation
 3. In DaVinci Resolve, open your project.
 4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 

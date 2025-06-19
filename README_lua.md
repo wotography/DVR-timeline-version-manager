@@ -13,9 +13,23 @@ This script adds a graphical user interface (GUI) to DaVinci Resolve Studio for 
 ## Installation
 1. Download or copy `timeline_version_up.lua`.
 2. Place the file inside the Scripting Paths:
-MacOS: '/Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit'
-Windows: 'C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit'
-Linux: '/opt/resolve/Fusion/Scripts/Edit/' or '/home/resolve/Fusion/Scripts/Edit' depending on installation
+   - **macOS**:
+     ```
+     /Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit
+     ```
+   - **Windows**:
+     ```
+     C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit
+     ```
+   - **Linux**:
+     ```
+     /opt/resolve/Fusion/Scripts/Edit
+     ```
+     or
+     ```
+     /home/resolve/Fusion/Scripts/Edit
+     ```
+     depending on installation
 3. In DaVinci Resolve, open your project.
 4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 
