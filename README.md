@@ -5,8 +5,6 @@
 
 A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Supports both a graphical Lua GUI script (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
----
-
 ## Table of Contents
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
@@ -17,12 +15,8 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 - [Changelog](#changelog)
 - [License](#license)
 
----
-
 ## Instructions for Python legacy CLI version
 For more detailed python script-specific instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
-
----
 
 ## Overview
 This repository provides two powerful tools for managing timeline versions in DaVinci Resolve Studio:
@@ -34,15 +28,11 @@ Both tools support flexible version/date formats, automatic folder creation, and
 
 > **Notice:** The Python script is no longer actively developed or maintained. For new projects and ongoing support, please use the Lua GUI script (`timeline_version_up.lua`).
 
----
-
 ## Prerequisites
 - **DaVinci Resolve Studio** (the free version does not support scripting)
 - **Scripting enabled** in Resolve Preferences (Preferences > System > General > External scripting using: Local)
 - **Operating System:** macOS, Windows, or Linux (where Resolve Studio is supported)
 - For Python script: **Python 3.6+** and the `DaVinciResolveScript` module which usually comes with Resolve.
-
----
 
 ## Donate
 Thanks for using this script — I hope it helped with your work!  
@@ -50,8 +40,6 @@ If it saved you time or proved useful, consider donating a coffee.
 Your support helps keep the project going.
 
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
-
----
 
 ## Installation
 
@@ -78,8 +66,6 @@ Your support helps keep the project going.
 3. In DaVinci Resolve, open your project.
 4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 
----
-
 ## Usage
 
 ### Lua GUI Script
@@ -97,8 +83,6 @@ Your support helps keep the project going.
 6. Click **Start renaming** to process the selected timelines. Progress and results will be shown in the log area.
 7. Review the Media Pool for new/renamed timelines and folders.
 
----
-
 ## Features
 - **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
 - **Batch Processing**: Rename and version multiple timelines at once.
@@ -108,16 +92,12 @@ Your support helps keep the project going.
 - **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
 - **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or log file).
 
----
-
 ## Troubleshooting
 - **Script not visible in menu?** Make sure the right script folder.
 - **No timelines processed?** Check the Console or the Log Messages. Probably you forgot to select timelines in the Media Pool before running the script.
 - **No GUI appears?** Ensure you are running the Lua script from within DaVinci Resolve Studio, not the free version.
 - **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
 - **Still having issues?** Open an Issue, add as much information as possible.
-
----
 
 ## Changelog
 
@@ -129,8 +109,6 @@ Your support helps keep the project going.
 
 #### v0.1.0
 - Initial release: GUI for timeline versioning, date formatting, folder creation, and batch renaming
-
----
 
 ## License
 MIT License - See LICENSE file for details 
