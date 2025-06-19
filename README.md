@@ -23,7 +23,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 ---
 
 ## Detailed Instructions
-For more detailed, python script-specific instructions, see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained).
+For more detailed, python script-specific, instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained).
 
 ---
 
