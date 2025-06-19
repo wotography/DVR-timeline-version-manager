@@ -121,12 +121,12 @@ Linux: '/opt/resolve/Fusion/Scripts/Edit/' or '/home/resolve/Fusion/Scripts/Edit
 ---
 
 ## Troubleshooting
-- **Script not visible in menu?** Make sure the script folder is added in Workspace > Scripts > Add Script Location.
-- **No timelines processed?** Select timelines in the Media Pool before running the script.
+- **Script not visible in menu?** Make sure the right script folder.
+- **No timelines processed?** Check the Console or the Log Messages. Probably you forgot to select timelines in the Media Pool before running the script.
 - **No GUI appears?** Ensure you are running the Lua script from within DaVinci Resolve Studio, not the free version.
 - **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
 - **Python errors?** Ensure Python 3.6+ is installed and the `DaVinciResolveScript` module is available.
-- **Still having issues?** Try restarting Resolve and ensure you are using the latest Studio version.
+- **Still having issues?** Open an Issue, add as much information as possible.
 
 ---
 

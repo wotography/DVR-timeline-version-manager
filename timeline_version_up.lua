@@ -5,6 +5,7 @@ DaVinci Resolve Timeline Version Updater (GUI)
 - Shows a compact log/status area
 --]]
 
+-- Version: v0.1.1 (2025-06-19)
 local SCRIPT_VERSION = 'v0.1.1'
 
 -- Helper: log to both console and GUI
