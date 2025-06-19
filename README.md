@@ -1,6 +1,5 @@
 # DaVinci Resolve Timeline Version Updater
 
-[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 
@@ -13,8 +12,6 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Lua GUI Script](#lua-gui-script)
-  - [Python CLI Script](#python-cli-script)
 - [Features](#features)
 - [Troubleshooting](#troubleshooting)
 - [Changelog](#changelog)
@@ -22,7 +19,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 
 ---
 
-## Detailed Instructions
+## Instructions for Python legacy CLI version
 For more detailed, python script-specific, instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained).
 
 ---
@@ -43,7 +40,7 @@ Both tools support flexible version/date formats, automatic folder creation, and
 - **DaVinci Resolve Studio** (the free version does not support scripting)
 - **Scripting enabled** in Resolve Preferences (Preferences > System > General > External scripting using: Local)
 - **Operating System:** macOS, Windows, or Linux (where Resolve Studio is supported)
-- For Python script: **Python 3.6+** and the `DaVinciResolveScript` module
+- For Python script: **Python 3.6+** and the `DaVinciResolveScript` module which usually comes with Resolve.
 
 ---
 
@@ -104,14 +101,12 @@ Your support helps keep the project going.
 
 ## Features
 - **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
-- **Command-Line Automation (Python)**: Flexible pattern-based renaming and versioning.
 - **Batch Processing**: Rename and version multiple timelines at once.
 - **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
 - **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
 - **Automatic Folder Creation**: Move new timelines to folders named by version, date, or both ("Version + Date").
 - **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
 - **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or log file).
-- **Advanced Pattern Placeholders (Python)**: Use `{n}`, `{original}`, `{current_date}`, `{version+1}`, `{version-1}` in naming patterns.
 
 ---
 
@@ -120,7 +115,6 @@ Your support helps keep the project going.
 - **No timelines processed?** Check the Console or the Log Messages. Probably you forgot to select timelines in the Media Pool before running the script.
 - **No GUI appears?** Ensure you are running the Lua script from within DaVinci Resolve Studio, not the free version.
 - **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
-- **Python errors?** Ensure Python 3.6+ is installed and the `DaVinciResolveScript` module is available.
 - **Still having issues?** Open an Issue, add as much information as possible.
 
 ---

@@ -2,6 +2,10 @@
 
 > **Notice:** This Python script is no longer actively developed or maintained. For new projects and ongoing support, please use the Lua GUI script (`timeline_version_up.lua`).
 
+[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
+
 A Python script for automatic version management of timelines in DaVinci Resolve Studio. This script enables renaming of timelines in the DaVinci Resolve Media Pool and automatically increments version numbers in timeline names.
 
 A German language intoduction for Terminal beginners can be found [here](Anleitung_fuer_Terminal_Anfaenger.md).
