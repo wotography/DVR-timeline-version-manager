@@ -23,9 +23,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 ---
 
 ## Detailed Instructions
-For more detailed, script-specific instructions, see:
-- [Lua GUI Script Documentation](./README_lua.md) (recommended, actively maintained)
-- [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained)
+For more detailed, python script-specific instructions, see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (legacy, not maintained).
 
 ---
 
@@ -61,7 +59,7 @@ Your support helps keep the project going.
 ## Installation
 
 ### Lua GUI Script
-1. Download or copy `timeline_version_up.lua`.
+1. Download or copy [timeline_version_up.lua](https://raw.githubusercontent.com/wotography/DVR-timeline-version-increments/main/timeline_version_up.lua).
 2. Place the file inside the Scripting Paths:
    - **macOS**:
      ```
@@ -83,11 +81,6 @@ Your support helps keep the project going.
 3. In DaVinci Resolve, open your project.
 4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 
-### Python CLI Script
-1. Download or copy `timeline_version_up.py` to any folder.
-2. Ensure Python 3.6+ is installed (`python3 --version`).
-3. Ensure the `DaVinciResolveScript` module is available (see [Installation](#installation) in the Python section below).
-
 ---
 
 ## Usage
@@ -106,18 +99,6 @@ Your support helps keep the project going.
    - **Version and date formats:** Select from a wide range of formats.
 6. Click **Start renaming** to process the selected timelines. Progress and results will be shown in the log area.
 7. Review the Media Pool for new/renamed timelines and folders.
-
-### Python CLI Script
-1. **Open DaVinci Resolve Studio** and load your project.
-2. In the **Media Pool**, select the timelines you want to version up or modify.
-3. Open a terminal and navigate to the folder containing `timeline_version_up.py`.
-4. Run the script with your desired naming pattern, e.g.:
-   ```bash
-   python3 timeline_version_up.py "{version+1}_{current_date}"
-   ```
-5. The script will process the selected timelines and print a summary/log to the console and a log file.
-
-> **Notice:** The Python script is no longer actively developed or maintained. For new projects and ongoing support, please use the Lua GUI script (`timeline_version_up.lua`).
 
 ---
 
