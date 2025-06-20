@@ -1,10 +1,14 @@
 # Alles ignorieren ...
 *
 
-# ... außer diesen vier Dateien
+# Main file and README
 !timeline_version_manager.*
 !README*.md
 !LICENSE
+
+# Images
+!images/
+!images/DVR-timeline-version-manager.png
 
 # Whitelist Python legacy script directory and its contents
 !python-legacy-script/

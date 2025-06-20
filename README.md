@@ -5,6 +5,8 @@
 
 A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Supports both a graphical Lua GUI script (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
+![Screenshot](/images/DVR-timeline-version-manager.png?raw=true "Screenshot")
+
 ## Table of Contents
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
@@ -54,7 +56,7 @@ It is **strongly recommended** to create backups of your DaVinci Resolve project
 Use responsibly, and only if you understand what the script does and how it affects your project.
 
 ### Lua GUI Script
-1. Download the tool here: [timeline_version_up.lua](https://raw.githubusercontent.com/wotography/DVR-timeline-version-increments/main/timeline_version_up.lua) or check the latest release.
+1. Download the tool here: [timeline_version_manager.lua](https://raw.githubusercontent.com/wotography/DVR-timeline-version-manager/main/timeline_version_manager.lua) or check the latest release.
 2. Place the file inside the Scripting Paths:
    - **macOS**:
      ```
@@ -81,7 +83,7 @@ Use responsibly, and only if you understand what the script does and how it affe
 ### Lua GUI Script
 1. **Open DaVinci Resolve Studio** and load your project.
 2. In the **Media Pool**, select one or more timelines you want to version up or rename.
-3. Go to **Workspace > Scripts** and run `timeline_version_up.lua`.
+3. Go to **Workspace > Scripts** and run `timeline_version_manager.lua`.
 4. The GUI will appear with options for versioning, date formatting, folder creation, and more.
 5. Adjust the settings as needed:
    - **Version +1:** Increment version number in timeline names.
@@ -126,6 +128,17 @@ Use responsibly, and only if you understand what the script does and how it affe
 ## Changelog
 
 ### Lua Script
+#### v0.1.8 (2025-06-20)
+- **Refactoring & Performance**:
+  - Major code refactoring for improved readability and maintainability.
+  - Replaced complex `if/else` logic with more efficient table-driven approaches for better performance.
+- **Bug Fixes**:
+  - Fixed a critical bug where folder names were not created correctly when using the "Version + Date" naming scheme with certain name formatting options. The date format is now preserved.
+  - Corrected an issue where timeline name formatting (e.g., converting separators to spaces) would incorrectly alter the date format within the timeline name itself.
+  - Resolved an issue with the execution timer reporting incorrect durations. It now accurately measures real-world time.
+- **Features**:
+  - Added an execution timer to the log to show how long the script took to process the timelines.
+
 #### v0.1.1 (2024-06-19)
 - Added support for version formats: Version1, Version01, Version001
 - Improved folder creation logic for "Version + Date" mode
