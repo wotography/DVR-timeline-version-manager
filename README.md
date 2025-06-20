@@ -1,6 +1,5 @@
 # DaVinci Resolve Timeline Version Manager
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
@@ -151,5 +150,5 @@ Use responsibly, and only if you understand what the script does and how it affe
 - Initial release: GUI for timeline versioning, date formatting, folder creation, and batch renaming
 
 ## License
-MIT License - See LICENSE file for details 
+GNU GPL 3 License - See LICENSE file for details 
  
