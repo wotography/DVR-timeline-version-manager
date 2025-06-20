@@ -1,12 +1,7 @@
---[[
-DaVinci Resolve Timeline Version Updater (GUI)
-- GUI with checkboxes for version+1 and current_date and other settings
-- Applies selected pattern(s) to all selected timelines in the Media Pool
-- Shows a compact log/status area
---]]
+-- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.1 (2025-06-19)
-local SCRIPT_VERSION = 'v0.1.1'
+-- Version: v0.1.8 (2025-06-20)
+local SCRIPT_VERSION = 'v0.1.8'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -43,19 +38,15 @@ end
 
 -- Helper: get current date in specified format
 function getCurrentDateFormatted(format)
-    if format == 'YYYY-MM-DD' then
-        return os.date('%Y-%m-%d')
-    elseif format == 'YYMMDD' then
-        return os.date('%y%m%d')
-    elseif format == 'YYYYMMDD' then
-        return os.date('%Y%m%d')
-    elseif format == 'DD-MM-YYYY' then
-        return os.date('%d-%m-%Y')
-    elseif format == 'MM-DD-YYYY' then
-        return os.date('%m-%d-%Y')
-    else
-        return os.date('%Y-%m-%d') -- default
-    end
+    local dateFormatMap = {
+        ['YYYY-MM-DD'] = '%Y-%m-%d',
+        ['YYMMDD']     = '%y%m%d',
+        ['YYYYMMDD']   = '%Y%m%d',
+        ['DD-MM-YYYY'] = '%d-%m-%Y',
+        ['MM-DD-YYYY'] = '%m-%d-%Y',
+    }
+    local formatStr = dateFormatMap[format] or '%Y-%m-%d' -- default
+    return os.date(formatStr)
 end
 
 -- Helper: extract version number from name (v001, V2, version1, etc.)
@@ -107,73 +98,34 @@ function insertVersionBeforeDate(name, vstr)
     return name .. ' ' .. vstr
 end
 
--- Helper: increment version in name, or add v1 if missing
+-- Helper: get formatted version string
+function getVersionString(versionNum, versionFormat)
+    -- Extracts prefix (like 'v', 'V', 'version') and number part (like '1', '01', '001')
+    local prefix, numPart = versionFormat:match('(^%a+)(%d+)$')
+    if prefix and numPart then
+        -- Format with padding based on length of number part
+        return string.format('%s%0' .. #numPart .. 'd', prefix, versionNum)
+    else
+        -- Fallback for simple formats like 'v1' or if pattern fails
+        local p = versionFormat:match('^%a+') or 'v'
+        return p .. tostring(versionNum)
+    end
+end
+
+-- Helper: increment version in name, or add if missing
 function incrementVersion(name, appendV1, versionFormat, userVersionNum)
     local v = extractVersion(name)
     if v then
         local newv = v + 1
-        local vstr
-        if versionFormat == 'v001' then
-            vstr = string.format('v%03d', newv)
-        elseif versionFormat == 'v01' then
-            vstr = string.format('v%02d', newv)
-        elseif versionFormat == 'v1' then
-            vstr = string.format('v%d', newv)
-        elseif versionFormat == 'V001' then
-            vstr = string.format('V%03d', newv)
-        elseif versionFormat == 'V01' then
-            vstr = string.format('V%02d', newv)
-        elseif versionFormat == 'V1' then
-            vstr = string.format('V%d', newv)
-        elseif versionFormat == 'version001' then
-            vstr = string.format('version%03d', newv)
-        elseif versionFormat == 'version01' then
-            vstr = string.format('version%02d', newv)
-        elseif versionFormat == 'version1' then
-            vstr = string.format('version%d', newv)
-        elseif versionFormat == 'Version001' then
-            vstr = string.format('Version%03d', newv)
-        elseif versionFormat == 'Version01' then
-            vstr = string.format('Version%02d', newv)
-        elseif versionFormat == 'Version1' then
-            vstr = string.format('Version%d', newv)
-        else
-            vstr = string.format('v%0' .. string.len(tostring(v)) .. 'd', newv)
-        end
+        local vstr = getVersionString(newv, versionFormat)
         -- Remove old version, then insert new version before date if present
-        local name_wo_version = name:gsub('[vV]%d+', ''):gsub('[vV]ersion%d+', ''):gsub('^ +', ''):gsub(' +$', '')
+        -- The order of gsub is important to avoid 'version' becoming 'ersion'
+        local name_wo_version = name:gsub('[vV]ersion%d+', ''):gsub('[vV]%d+', ''):gsub('^%s*', ''):gsub('%s*$', '')
         return insertVersionBeforeDate(name_wo_version, vstr)
     else
         if appendV1 then
             local versionNum = tonumber(userVersionNum) or 1
-            local vstr
-            if versionFormat == 'v001' then
-                vstr = string.format('v%03d', versionNum)
-            elseif versionFormat == 'v01' then
-                vstr = string.format('v%02d', versionNum)
-            elseif versionFormat == 'v1' then
-                vstr = string.format('v%d', versionNum)
-            elseif versionFormat == 'V001' then
-                vstr = string.format('V%03d', versionNum)
-            elseif versionFormat == 'V01' then
-                vstr = string.format('V%02d', versionNum)
-            elseif versionFormat == 'V1' then
-                vstr = string.format('V%d', versionNum)
-            elseif versionFormat == 'version001' then
-                vstr = string.format('version%03d', versionNum)
-            elseif versionFormat == 'version01' then
-                vstr = string.format('version%02d', versionNum)
-            elseif versionFormat == 'version1' then
-                vstr = string.format('version%d', versionNum)
-            elseif versionFormat == 'Version001' then
-                vstr = string.format('Version%03d', versionNum)
-            elseif versionFormat == 'Version01' then
-                vstr = string.format('Version%02d', versionNum)
-            elseif versionFormat == 'Version1' then
-                vstr = string.format('Version%d', versionNum)
-            else
-                vstr = 'v' .. tostring(versionNum)
-            end
+            local vstr = getVersionString(versionNum, versionFormat)
             return insertVersionBeforeDate(name, vstr)
         else
             return name
@@ -184,14 +136,20 @@ end
 -- Helper: remove date from name (various formats)
 function removeDate(name)
     local n = name
-    n = n:gsub('%d%d%d%d%-%d%d%-%d%d', '') -- YYYY-MM-DD
-    n = n:gsub('%d%d%d%d%d%d%d%d', '') -- YYYYMMDD
-    n = n:gsub('%d%d%d%d%d%d', '') -- YYMMDD
-    n = n:gsub('%d%d%-%d%d%-%d%d%d%d', '') -- DD-MM-YYYY or MM-DD-YYYY
-    n = n:gsub('%d%d/%d%d/%d%d%d%d', '') -- DD/MM/YYYY or MM/DD/YYYY
-    n = n:gsub('%d%d%d%d/%d%d/%d%d', '') -- YYYY/MM/DD
+    -- The patterns are now flexible to handle different separators (-, _, /, space).
+    local separator = "[%s%-_/]"
+    local date_patterns = {
+        "%d%d%d%d"..separator.."%d%d"..separator.."%d%d", -- YYYY-sep-MM-sep-DD
+        "%d%d"..separator.."%d%d"..separator.."%d%d%d%d", -- DD-sep-MM-sep-YYYY or MM-sep-DD-sep-YYYY
+        "%d%d%d%d%d%d%d%d",     -- YYYYMMDD
+        "%d%d%d%d%d%d",        -- YYMMDD
+    }
+    for _, pat in ipairs(date_patterns) do
+        n = n:gsub(pat, '')
+    end
+    -- Clean up any leftover separators
     n = n:gsub('%s+', ' ')
-    n = n:gsub('[ _%-]+$', '')
+    n = n:gsub('[ _%-]+$', ''):gsub('^[ _%-]+', '')
     return n
 end
 
@@ -268,25 +226,20 @@ end
 
 -- Helper: format name with space replacement
 function formatNameSpaces(name, mode)
-    if mode == 'underscore' then
-        -- Convert all spaces, minuses, and underscores to underscores
-        local n = name:gsub('[%s%-_]+', '_')
-        return n
-    elseif mode == 'minus' then
-        -- Convert all spaces, underscores, and minuses to minuses
-        local n = name:gsub('[%s%-_]+', '-')
-        return n
-    elseif mode == 'space' then
-        -- Convert all underscores and minuses to spaces, and collapse multiple spaces
-        local n = name:gsub('[_%-]+', ' '):gsub('%s+', ' '):gsub('^ +', ''):gsub(' +$', '')
-        return n
-    else
-        return name
+    local formatters = {
+        underscore = function(n) return n:gsub('[%s%-_]+', '_') end,
+        minus = function(n) return n:gsub('[%s%-_]+', '-') end,
+        space = function(n) return n:gsub('[_%-]+', ' '):gsub('%s+', ' '):gsub('^%s*', ''):gsub('%s*$', '') end,
+    }
+    if formatters[mode] then
+        return formatters[mode](name)
     end
+    return name
 end
 
 -- Main processing function (updated)
 function processTimelines(patterns)
+    local startTime = os.time()
     if itm.TextEdit then
         itm.TextEdit:SetText('')
     end
@@ -333,7 +286,18 @@ function processTimelines(patterns)
     
     local count, renamed, skipped, errors = 0, 0, 0, 0
     local rootFolder = mediaPool:GetRootFolder()
+
+    -- Define date patterns here to be accessible for both folder and name formatting.
+    local separator = "[%s%-_/]"
+    local date_patterns = {
+        "%d%d%d%d"..separator.."%d%d"..separator.."%d%d", -- YYYY-sep-MM-sep-DD
+        "%d%d"..separator.."%d%d"..separator.."%d%d%d%d", -- DD-sep-MM-sep-YYYY or MM-sep-DD-sep-YYYY
+        "%d%d%d%d%d%d%d%d",     -- YYYYMMDD
+        "%d%d%d%d%d%d",        -- YYMMDD
+    }
+
     for _, item in pairs(selected) do
+        local success = false
         if type(item) == "userdata" and item.GetClipProperty then
             local props = item:GetClipProperty()
             if props and props['Type'] == 'Timeline' then
@@ -368,133 +332,174 @@ function processTimelines(patterns)
                     logMsg('Added/replaced current date in name')
                 end
                 
-                -- Only clean up and format name if formatting is ON and at least one other option is also ON
-                local onlyVersion = patterns.version and not (patterns.date or patterns.appendV1 or patterns.createNewFolder or (patterns.spaceMode and patterns.spaceMode ~= 'none'))
-                if itm.formatNameBox.Checked and patterns.spaceMode and patterns.spaceMode ~= 'none' and not onlyVersion then
-                    newName = formatNameSpaces(newName, patterns.spaceMode)
-                end
-                
-                -- Determine folder name based on folderNaming setting
-                if patterns.createNewFolder and patterns.folderNaming == 'Version + Date' then
-                    -- Extract version and date from newName
-                    local v = newName:match('[vV]%d+') or newName:match('[vV]ersion%d+')
-                    local d = nil
-                    -- Try to extract a date in any supported format from newName
-                    local date_patterns = {
-                        '%d%d%d%d%-%d%d%-%d%d', -- YYYY-MM-DD
-                        '%d%d%d%d%d%d%d%d',     -- YYYYMMDD
-                        '%d%d%d%d%d%d',        -- YYMMDD
-                        '%d%d%-%d%d%-%d%d%d%d',-- DD-MM-YYYY or MM-DD-YYYY
-                        '%d%d/%d%d/%d%d%d%d',  -- DD/MM/YYYY or MM/DD/YYYY
-                        '%d%d%d%d/%d%d/%d%d',  -- YYYY/MM/DD
-                    }
-                    for _, pat in ipairs(date_patterns) do
-                        local found = newName:match(pat)
-                        if found then d = found break end
+                -- Determine folder name before formatting timeline name
+                if patterns.createNewFolder then
+                    local folder_v_str = nil
+                    local folder_d_str = nil
+
+                    -- Extract version string from the unformatted name
+                    local v_num = extractVersion(newName)
+                    if v_num then
+                        folder_v_str = newName:match('[vV]%d+') or newName:match('[vV]ersion%d+')
                     end
-                    if v and d then
-                        folderName = v .. '_' .. d
-                    elseif v then
-                        folderName = v
-                    elseif d then
-                        folderName = d
+
+                    -- Get formatted date string. If adding new date, use that. Otherwise, try to find existing.
+                    if patterns.date then
+                        folder_d_str = getCurrentDateFormatted(patterns.dateFormat)
                     else
-                        -- Use default: current bin/folder name or fallback
-                        if timelineFolder then
-                            folderName = 'New Folder' -- fallback if needed
+                        for _, pat in ipairs(date_patterns) do
+                            local found = newName:match(pat)
+                            if found then folder_d_str = found; break end
+                        end
+                    end
+                    
+                    if patterns.folderNaming == 'Version + Date' then
+                        if folder_v_str and folder_d_str then
+                            folderName = folder_v_str .. '_' .. folder_d_str
+                        elseif folder_v_str then
+                            folderName = folder_v_str
+                        elseif folder_d_str then
+                            folderName = folder_d_str
                         else
                             folderName = 'New Folder'
                         end
-                    end
-                    useCustomFolder = true
-                elseif patterns.folderNaming == 'Date' and patterns.date then
-                    folderName = getCurrentDateFormatted(patterns.dateFormat)
-                    useCustomFolder = true
-                elseif patterns.folderNaming == 'Version' then
-                    local v = extractVersion(newName)
-                    if v then
-                        folderName = newName:match('[vV]%d+') or newName:match('[vV]ersion%d+')
                         useCustomFolder = true
+                    elseif patterns.folderNaming == 'Date' then
+                        if folder_d_str then
+                            folderName = folder_d_str
+                            useCustomFolder = true
+                        end
+                    elseif patterns.folderNaming == 'Version' then
+                        if folder_v_str then
+                            folderName = folder_v_str
+                            useCustomFolder = true
+                        end
                     end
                 end
                 
-                if newName == orig then
-                    logMsg(('No changes needed for "%s".'):format(orig))
-                    skipped = skipped + 1
-                    count = count + 1
-                    goto continue
+                -- Now, apply name formatting to the timeline name itself, while preserving the date format
+                local onlyVersion = patterns.version and not (patterns.date or patterns.appendV1 or patterns.createNewFolder or (patterns.spaceMode and patterns.spaceMode ~= 'none'))
+                if itm.formatNameBox.Checked and patterns.spaceMode and patterns.spaceMode ~= 'none' and not onlyVersion then
+                    -- To preserve date separators, temporarily replace the date with a "safe" placeholder.
+                    local date_placeholder = '~~DATE~~'
+                    local date_str = nil
+                    
+                    -- First, check if a new date was just added. If so, use that.
+                    if patterns.date then
+                        date_str = getCurrentDateFormatted(patterns.dateFormat)
+                    end
+
+                    -- If a new date wasn't added, try to find an existing date in the name.
+                    if not date_str then
+                        for _, pat in ipairs(date_patterns) do
+                            local found = newName:match(pat)
+                            if found then
+                                date_str = found
+                                break
+                            end
+                        end
+                    end
+                    
+                    -- If we have a date string (either new or existing), protect it.
+                    if date_str then
+                        -- Replace the date with the placeholder. Use a plain string find/replace to avoid regex issues.
+                        local s, e = newName:find(date_str, 1, true)
+                        if s then
+                           newName = newName:sub(1, s-1) .. date_placeholder .. newName:sub(e+1)
+                        end
+                    end
+
+                    -- Format the rest of the name. The placeholder will not be affected.
+                    newName = formatNameSpaces(newName, patterns.spaceMode)
+                    
+                    -- Restore the date string with its original separators.
+                    if date_str then
+                        local s, e = newName:find(date_placeholder, 1, true)
+                        if s then
+                           newName = newName:sub(1, s-1) .. date_str .. newName:sub(e+1)
+                        end
+                    end
                 end
                 
-                logMsg(('New timeline name: "%s"'):format(newName))
-                logMsg(('Processing "%s" → "%s"'):format(orig, newName))
-                
-                -- Find the folder containing this timeline
-                local timelineFolder = findTimelineFolder(rootFolder, orig)
-                if not timelineFolder then
-                    logMsg(('Could not find folder for timeline "%s".'):format(orig))
-                    skipped = skipped + 1
-                    count = count + 1
-                    goto continue
-                end
-                
-                -- Find the timeline object
-                local timeline = nil
-                local tcount = project:GetTimelineCount()
-                for ti=1,tcount do
-                    local t = project:GetTimelineByIndex(ti)
-                    if t and t:GetName() == orig then timeline = t break end
-                end
-                
-                if timeline then
-                    local ok = false
-                    if patterns.createNewFolder then
-                        -- Always duplicate and move to new folder
-                        local dup = timeline:DuplicateTimeline(newName)
-                        if dup then
-                            ok = true
-                            if useCustomFolder and folderName then
-                                local customFolder = createCustomFolderInParent(mediaPool, timelineFolder, folderName)
-                                if customFolder then
-                                    bmd.wait(1)
-                                    local clips = timelineFolder:GetClipList()
-                                    local dupClip = nil
-                                    for _, c in ipairs(clips) do
-                                        if c:GetName() == newName then
-                                            dupClip = c
-                                            break
-                                        end
+                if newName ~= orig then
+                    logMsg(('New timeline name: "%s"'):format(newName))
+                    logMsg(('Processing "%s" → "%s"'):format(orig, newName))
+                    
+                    -- Find the timeline object by iterating through project timelines
+                    local timeline = nil
+                    local timelineCount = project:GetTimelineCount()
+                    for i = 1, timelineCount do
+                        local t = project:GetTimelineByIndex(i)
+                        if t and t:GetName() == orig then
+                            timeline = t
+                            break
+                        end
+                    end
+                    
+                    if timeline then
+                        if patterns.createNewFolder then
+                            -- Always duplicate and move to new folder
+                            local dup = timeline:DuplicateTimeline(newName)
+                            if dup then
+                                if useCustomFolder and folderName then
+                                    local timelineFolder = findTimelineFolder(rootFolder, newName)
+                                    if not timelineFolder then
+                                        -- Sometimes the new timeline is not found in its original folder immediately
+                                        -- Let's retry finding it at the root.
+                                        timelineFolder = findTimelineFolder(rootFolder, orig)
                                     end
-                                    if dupClip then
-                                        local moved = mediaPool:MoveClips({dupClip}, customFolder)
-                                        if moved then
-                                            logMsg('Moved timeline to new folder: ' .. customFolder:GetName())
-                                        else
-                                            logMsg('Failed to move timeline to new folder.')
+
+                                    if timelineFolder then
+                                        local customFolder = createCustomFolderInParent(mediaPool, timelineFolder, folderName)
+                                        if customFolder then
+                                            -- bmd.wait is needed because moving clips is not always instantaneous.
+                                            -- This gives Resolve time to update its internal state.
+                                            bmd.wait(0.1)
+                                            local clips = timelineFolder:GetClipList()
+                                            local dupClip = nil
+                                            for _, c in ipairs(clips) do
+                                                if c:GetName() == newName then
+                                                    dupClip = c
+                                                    break
+                                                end
+                                            end
+                                            if dupClip then
+                                                local moved = mediaPool:MoveClips({dupClip}, customFolder)
+                                                if moved then
+                                                    logMsg('Moved timeline to new folder: ' .. customFolder:GetName())
+                                                else
+                                                    logMsg('Failed to move timeline to new folder.')
+                                                end
+                                            else
+                                                logMsg('Could not find duplicated timeline clip to move it.')
+                                            end
                                         end
                                     else
-                                        logMsg('Could not find duplicated timeline in folder: ' .. timelineFolder:GetName())
+                                        logMsg("Could not find timeline's parent folder.")
                                     end
                                 end
+                                logMsg(('Successfully duplicated "%s" as "%s".'):format(orig, newName))
+                                renamed = renamed + 1
+                            else
+                                logMsg(('Failed to duplicate "%s".'):format(orig))
+                                errors = errors + 1
                             end
-                            logMsg(('Successfully duplicated "%s" as "%s".'):format(orig, newName))
-                            renamed = renamed + 1
                         else
-                            logMsg(('Failed to duplicate "%s".'):format(orig))
-                            errors = errors + 1
+                            -- Just rename
+                            if timeline:SetName(newName) then
+                                logMsg(('Successfully renamed "%s" to "%s".'):format(orig, newName))
+                                renamed = renamed + 1
+                            else
+                                logMsg(('Failed to rename "%s".'):format(orig))
+                                errors = errors + 1
+                            end
                         end
                     else
-                        -- Just rename
-                        ok = timeline:SetName(newName)
-                        if ok then
-                            logMsg(('Successfully renamed "%s" to "%s".'):format(orig, newName))
-                            renamed = renamed + 1
-                        else
-                            logMsg(('Failed to rename "%s".'):format(orig))
-                            errors = errors + 1
-                        end
+                        logMsg(('Could not find timeline object for "%s" in the project. Skipping.'):format(orig))
+                        skipped = skipped + 1
                     end
                 else
-                    logMsg(('Timeline "%s" not found in project.'):format(orig))
+                    logMsg(('No changes needed for "%s".'):format(orig))
                     skipped = skipped + 1
                 end
                 count = count + 1
@@ -506,15 +511,16 @@ function processTimelines(patterns)
             logMsg('Skipped invalid item in selection.')
             skipped = skipped + 1
         end
-        ::continue::
     end
+    local duration = os.time() - startTime
+    logMsg(string.format('Finished in %d seconds.', duration))
     logMsg(('Done. %d processed, %d renamed, %d skipped, %d errors.'):format(count, renamed, skipped, errors))
 end
 
 -- Build UI
 win = dispatcher:AddWindow({
     ID = 'TimelineVersionUpWin',
-    WindowTitle = 'Timeline Version Updater',
+    WindowTitle = 'Timeline Version Manager',
     Geometry = {100, 100, 560, 460},
     MinimumSize = {380, 460},
     Spacing = 8,
@@ -524,7 +530,7 @@ win = dispatcher:AddWindow({
         -- Title label
         ui:Label{
             ID = 'TitleLabel',
-            Text = 'Timeline Version Updater',
+            Text = 'Timeline Version Manager',
             StyleSheet = [[
                 QLabel {
                     font-size: 14px;
@@ -598,7 +604,7 @@ win = dispatcher:AddWindow({
         -- Run/Close buttons (move above log area)
         ui:HGroup{
             Weight = 0,
-            ui:Button{ID='runBtn', Text='Start renaming', MinimumSize={80,0}},
+            ui:Button{ID='runBtn', Text='Run actions', MinimumSize={80,0}},
             ui:Button{ID='closeBtn', Text='Close', MinimumSize={80,0}},
         },
         ui:VGap(6, 0.01),
