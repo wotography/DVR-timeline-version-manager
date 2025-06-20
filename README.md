@@ -126,6 +126,8 @@ Use responsibly, and only if you understand what the script does and how it affe
      - Red: Error occurred
      - Green: Successfully completed
 
+3. **Split current date functions to add and or replace dates.**
+
 ## Changelog
 
 ### Lua Script
