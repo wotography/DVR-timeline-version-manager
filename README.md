@@ -125,6 +125,9 @@ Use responsibly, and only if you understand what the script does and how it affe
      - Red: Error occurred
      - Green: Successfully completed
 
+3. **Save Custom Default Settings**
+   - Add button to save/load custom default settings
+
 3. **Split current date functions to add and or replace dates.**
 
 ## Changelog
