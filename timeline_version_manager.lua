@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.8 (2025-06-20)
-local SCRIPT_VERSION = 'v0.1.8'
+-- Version: v0.1.9  (2025-07-28)
+local SCRIPT_VERSION = 'v0.1.9'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -646,12 +646,12 @@ itm = win:GetItems()
 
 -- Populate ComboBox items and set default
 itm.formatCombo:AddItems({'Space','Underscore _','Minus -'})
-itm.formatCombo.CurrentIndex = 0
+itm.formatCombo.CurrentIndex = 1
 itm.dateFormatCombo:AddItems({'YYMMDD', 'YYYYMMDD', 'YYYY-MM-DD', 'MM-DD-YYYY', 'DD-MM-YYYY'})
 itm.dateFormatCombo.CurrentIndex = 0
 itm.versionFormatCombo:AddItems({'v1', 'v01', 'v001', 'V1', 'V01', 'V001', 'version1', 'version01', 'version001', 'Version1', 'Version01', 'Version001'})
 itm.versionFormatCombo.CurrentIndex = 0
-itm.folderNamingCombo:AddItems({'Version', 'Date', 'Version + Date'})
+itm.folderNamingCombo:AddItems({'Version + Date', 'Version', 'Date'})
 itm.folderNamingCombo.CurrentIndex = 0
 
 -- Only format name if the checkbox is checked

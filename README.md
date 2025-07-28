@@ -10,10 +10,12 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 ## Table of Contents
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
+- [Donate](#donate)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Features](#features)
-- [Troubleshooting](#troubleshooting)
+- [Usage](#usage)
+- [Known Issues](#Known)
+- [Roadmap](#roadmap)
 - [Changelog](#changelog)
 - [License](#license)
 
@@ -44,7 +46,6 @@ Your support helps keep the project going.
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
 ## Installation
-
 ### ⚠️ Disclaimer
 
 This tool is provided **as is** and **without any warranty** of any kind.  
@@ -78,8 +79,16 @@ Use responsibly, and only if you understand what the script does and how it affe
 3. In DaVinci Resolve, open your project.
 4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** inside Resolve.
 
-## Usage
+## Features
+- **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
+- **Batch Processing**: Rename and version multiple timelines at once.
+- **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
+- **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
+- **Automatic Folder Creation**: Move new timelines to folders named by version, date, or both ("Version + Date").
+- **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
+- **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or log file).
 
+## Usage
 ### Lua GUI Script
 1. **Open DaVinci Resolve Studio** and load your project.
 2. In the **Media Pool**, select one or more timelines you want to version up or rename.
@@ -95,24 +104,16 @@ Use responsibly, and only if you understand what the script does and how it affe
 6. Click **Start renaming** to process the selected timelines. Progress and results will be shown in the log area.
 7. Review the Media Pool for new/renamed timelines and folders.
 
-## Features
-- **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
-- **Batch Processing**: Rename and version multiple timelines at once.
-- **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
-- **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
-- **Automatic Folder Creation**: Move new timelines to folders named by version, date, or both ("Version + Date").
-- **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
-- **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or log file).
-
-## Troubleshooting
-- **Script not visible in menu?** Make sure the right script folder.
-- **No timelines processed?** Check the Console or the Log Messages. Probably you forgot to select timelines in the Media Pool before running the script.
-- **No GUI appears?** Ensure you are running the Lua script from within DaVinci Resolve Studio, not the free version.
-- **Errors about scripting API?** Check that scripting is enabled in Resolve Preferences.
-- **Still having issues?** Open an Issue, add as much information as possible.
+## Known Issues
+We are continuously working to improve the software, and your feedback is invaluable. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
+Identified Issues
+- **Script Visibility**: Some users may experience issues with scripts not appearing in the menu. Ensure that the correct script folder is selected.
+- **Timeline Processing**: If no timelines are processed, check the Console or Log Messages for errors. This issue often occurs if timelines are not selected in the Media Pool before running the script.
+- **GUI Display**: The GUI may not appear if the script is run from the free version of DaVinci Resolve instead of DaVinci Resolve Studio. Make sure you are using the correct version.
+- **Scripting API Errors**: Errors related to the scripting API can usually be resolved by ensuring that scripting is enabled in the Resolve Preferences.
+- **Still having issues?** Open an Issue, add as much information as possible. I appreciate your Feedback. Please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
 ## Roadmap
-
 ### Planned Features
 1. **Enhanced Version Naming Options**
    - Add new prefix options: "edit" or "Edit"
@@ -133,6 +134,8 @@ Use responsibly, and only if you understand what the script does and how it affe
 ## Changelog
 
 ### Lua Script
+#### v0.1.9 (2025-07-28)
+- updated default settings
 #### v0.1.8 (2025-06-20)
 - **Refactoring & Performance**:
   - Major code refactoring for improved readability and maintainability.
