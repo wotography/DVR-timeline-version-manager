@@ -14,7 +14,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 - [Installation](#installation)
 - [Features](#features)
 - [Usage](#usage)
-- [Known Issues](#Known)
+- [Known Issues](#Known Issues)
 - [Roadmap](#roadmap)
 - [Changelog](#changelog)
 - [License](#license)
