@@ -128,7 +128,7 @@ Use responsibly, and only if you understand what the script does and how it affe
 3. **Save Custom Default Settings**
    - Add button to save/load custom default settings
 
-3. **Split current date functions to add and or replace dates.**
+4. **Split current date functions to add and or replace dates.**
 
 ## Changelog
 
