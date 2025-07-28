@@ -110,6 +110,7 @@ Identified Issues
 - **Timeline Processing**: If no timelines are processed, check the Console or Log Messages for errors. This issue often occurs if timelines are not selected in the Media Pool before running the script.
 - **GUI Display**: The GUI may not appear if the script is run from the free version of DaVinci Resolve instead of DaVinci Resolve Studio. Make sure you are using the correct version.
 - **Scripting API Errors**: Errors related to the scripting API can usually be resolved by ensuring that scripting is enabled in the Resolve Preferences.
+
 I appreciate your Feedback. Please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
 ## Roadmap
