@@ -1,13 +1,115 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.8 (2025-06-20)
-local SCRIPT_VERSION = 'v0.1.8'
+-- Version: v0.1.9b (2025-07-27)
+local SCRIPT_VERSION = 'v0.1.9b'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
     print(msg)
     if itm.TextEdit then
         itm.TextEdit:Append(msg .. '\n')
+    end
+end
+
+-- JSON encode/decode helpers
+local has_json, json = pcall(require, 'json')
+if not has_json then
+    -- Minimal JSON encode for tables with string/number/bool values
+    function json_encode(tbl)
+        local function esc(s) return '"'..tostring(s):gsub('"','\\"')..'"' end
+        local t, i = {}, 1
+        t[i] = '{'
+        for k,v in pairs(tbl) do
+            if i > 1 then t[i+1] = ','; i = i+1 end
+            t[i+1] = esc(k) .. ':'
+            if type(v) == 'string' then t[i+2] = esc(v)
+            elseif type(v) == 'number' or type(v) == 'boolean' then t[i+2] = tostring(v)
+            else t[i+2] = 'null' end
+            i = i+2
+        end
+        t[i+1] = '}'
+        return table.concat(t)
+    end
+    -- No decode fallback; only writing is supported if no json module
+    function json_decode(str) return nil end
+    logMsg('Warning: No JSON library found. Settings will not be loaded on next start. To enable full settings save/load, install a Lua JSON library (e.g. rxi/json.lua) and ensure require("json") works.')
+else
+    json_encode = json.encode
+    json_decode = json.decode
+end
+
+-- Get current settings from UI
+function getCurrentSettings()
+    return {
+        version = itm.versionBox.Checked,
+        date = itm.dateBox.Checked,
+        appendV1 = itm.appendV1Box.Checked,
+        spaceMode = getNameFormatMode(),
+        createNewFolder = itm.createNewFolderBox.Checked,
+        dateFormat = itm.dateFormatCombo.CurrentText,
+        versionFormat = itm.versionFormatCombo.CurrentText,
+        folderNaming = itm.folderNamingCombo.CurrentText,
+        userVersionNum = itm.versionInput.Text
+    }
+end
+
+-- Save settings to file
+function saveDefaults()
+    local settings = getCurrentSettings()
+    local home = os.getenv('HOME') or '.'
+    local path = home .. '/.timeline_version_manager_defaults.json'
+    local f = io.open(path, 'w')
+    if f then
+        f:write(json_encode(settings))
+        f:close()
+        logMsg('Default settings saved to ' .. path)
+    else
+        logMsg('Failed to save default settings.')
+    end
+end
+
+-- Load settings from file and apply to UI
+function loadDefaults()
+    local home = os.getenv('HOME') or '.'
+    local path = home .. '/.timeline_version_manager_defaults.json'
+    local f = io.open(path, 'r')
+    if f then
+        local content = f:read('*a')
+        f:close()
+        local settings = json_decode and json_decode(content)
+        if settings then
+            itm.versionBox.Checked = settings.version or false
+            itm.dateBox.Checked = settings.date or false
+            itm.appendV1Box.Checked = settings.appendV1 or false
+            itm.createNewFolderBox.Checked = settings.createNewFolder or false
+            itm.versionInput.Text = settings.userVersionNum or '1'
+            -- Set ComboBoxes by value
+            for i=0,itm.dateFormatCombo.Count-1 do
+                if itm.dateFormatCombo:GetItemText(i) == settings.dateFormat then
+                    itm.dateFormatCombo.CurrentIndex = i
+                    break
+                end
+            end
+            for i=0,itm.versionFormatCombo.Count-1 do
+                if itm.versionFormatCombo:GetItemText(i) == settings.versionFormat then
+                    itm.versionFormatCombo.CurrentIndex = i
+                    break
+                end
+            end
+            for i=0,itm.folderNamingCombo.Count-1 do
+                if itm.folderNamingCombo:GetItemText(i) == settings.folderNaming then
+                    itm.folderNamingCombo.CurrentIndex = i
+                    break
+                end
+            end
+            for i=0,itm.formatCombo.Count-1 do
+                if itm.formatCombo:GetItemText(i):lower():find(settings.spaceMode or 'space') then
+                    itm.formatCombo.CurrentIndex = i
+                    break
+                end
+            end
+            logMsg('Loaded default settings from ' .. path)
+        end
     end
 end
 
@@ -605,6 +707,7 @@ win = dispatcher:AddWindow({
         ui:HGroup{
             Weight = 0,
             ui:Button{ID='runBtn', Text='Run actions', MinimumSize={80,0}},
+            ui:Button{ID='saveDefaultsBtn', Text='Save settings as default', MinimumSize={80,0}},
             ui:Button{ID='closeBtn', Text='Close', MinimumSize={80,0}},
         },
         ui:VGap(6, 0.01),
@@ -653,6 +756,7 @@ itm.versionFormatCombo:AddItems({'v1', 'v01', 'v001', 'V1', 'V01', 'V001', 'vers
 itm.versionFormatCombo.CurrentIndex = 0
 itm.folderNamingCombo:AddItems({'Version', 'Date', 'Version + Date'})
 itm.folderNamingCombo.CurrentIndex = 0
+loadDefaults()
 
 -- Only format name if the checkbox is checked
 function getNameFormatMode()
@@ -666,6 +770,10 @@ function getNameFormatMode()
         end
     end
     return 'none'
+end
+
+function win.On.saveDefaultsBtn.Clicked(ev)
+    saveDefaults()
 end
 
 function win.On.runBtn.Clicked(ev)
