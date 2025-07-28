@@ -14,6 +14,7 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 - [Installation](#installation)
 - [Features](#features)
 - [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
 - [Roadmap](#roadmap)
 - [Changelog](#changelog)
 - [License](#license)
@@ -103,15 +104,18 @@ Use responsibly, and only if you understand what the script does and how it affe
 6. Click **Start renaming** to process the selected timelines. Progress and results will be shown in the log area.
 7. Review the Media Pool for new/renamed timelines and folders.
 
-## Known Issues
-I am continuously working to improve the plugin, and your feedback is invaluable. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
-Identified Issues
+## Troubleshooting
 - **Script Visibility**: Some users may experience issues with scripts not appearing in the menu. Ensure that the correct script folder is selected.
 - **Timeline Processing**: If no timelines are processed, check the Console or Log Messages for errors. This issue often occurs if timelines are not selected in the Media Pool before running the script.
 - **GUI Display**: The GUI may not appear if the script is run from the free version of DaVinci Resolve instead of DaVinci Resolve Studio. Make sure you are using the correct version.
 - **Scripting API Errors**: Errors related to the scripting API can usually be resolved by ensuring that scripting is enabled in the Resolve Preferences.
 
-I appreciate your Feedback. Please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
+### Known Issues
+I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
+
+**Identified Issues**: None
+
+Your feedback is invaluable, please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
 ## Roadmap
 ### Planned Features
