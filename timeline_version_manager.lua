@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.9  (2025-07-28)
-local SCRIPT_VERSION = 'v0.1.9'
+-- Version: v0.1.10  (2025-08-01)
+local SCRIPT_VERSION = 'v0.1.10'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -100,16 +100,33 @@ end
 
 -- Helper: get formatted version string
 function getVersionString(versionNum, versionFormat)
-    -- Extracts prefix (like 'v', 'V', 'version') and number part (like '1', '01', '001')
-    local prefix, numPart = versionFormat:match('(^%a+)(%d+)$')
-    if prefix and numPart then
-        -- Format with padding based on length of number part
-        return string.format('%s%0' .. #numPart .. 'd', prefix, versionNum)
-    else
-        -- Fallback for simple formats like 'v1' or if pattern fails
-        local p = versionFormat:match('^%a+') or 'v'
-        return p .. tostring(versionNum)
+    -- Handle different version format patterns
+    if versionFormat:match('^[vV]%d+$') then
+        -- Format like 'v1', 'v01', 'v001', 'V1', 'V01', 'V001'
+        local prefix = versionFormat:match('^[vV]')
+        local numPart = versionFormat:match('%d+$')
+        if prefix and numPart then
+            return string.format('%s%0' .. #numPart .. 'd', prefix, versionNum)
+        end
+    elseif versionFormat:match('^version%d+$') then
+        -- Format like 'version1', 'version01', 'version001'
+        local prefix = 'version'
+        local numPart = versionFormat:match('%d+$')
+        if numPart then
+            return string.format('%s%0' .. #numPart .. 'd', prefix, versionNum)
+        end
+    elseif versionFormat:match('^Version%d+$') then
+        -- Format like 'Version1', 'Version01', 'Version001'
+        local prefix = 'Version'
+        local numPart = versionFormat:match('%d+$')
+        if numPart then
+            return string.format('%s%0' .. #numPart .. 'd', prefix, versionNum)
+        end
     end
+    
+    -- Fallback for any unrecognized format
+    local p = versionFormat:match('^%a+') or 'v'
+    return p .. tostring(versionNum)
 end
 
 -- Helper: increment version in name, or add if missing
@@ -257,8 +274,9 @@ function processTimelines(patterns)
     if patterns.appendV1 then
         logMsg('- Version number to append: ' .. (patterns.userVersionNum or '1'))
     end
-    logMsg('- Create new folders: ' .. (patterns.createNewFolder and 'ON' or 'OFF'))
-    if patterns.createNewFolder then
+    logMsg('- Action mode: ' .. (patterns.actionMode == 'duplicate' and 'Duplicate' or 'Rename'))
+    if patterns.actionMode == 'duplicate' and patterns.moveToFolder then
+        logMsg('- Move to new folder: ON')
         logMsg('- Folder naming scheme: ' .. (patterns.folderNaming or 'Date'))
     end
     logMsg('- Name formatting: ' .. (patterns.spaceMode ~= 'none' and patterns.spaceMode or 'OFF'))
@@ -280,8 +298,8 @@ function processTimelines(patterns)
     end
     
     -- Validate settings
-    if patterns.createNewFolder and not patterns.version and not patterns.date and not patterns.appendV1 then
-        logMsg('Warning: Create new folders is enabled but neither Version +1, Add/replace date, nor Append version if missing is enabled. No folders will be created.')
+    if patterns.actionMode == 'duplicate' and patterns.moveToFolder and not patterns.version and not patterns.date and not patterns.appendV1 then
+        logMsg('Warning: Move to new folder is enabled but neither Version +1, Add/replace date, nor Append version if missing is enabled. No folders will be created.')
     end
     
     local count, renamed, skipped, errors = 0, 0, 0, 0
@@ -333,7 +351,7 @@ function processTimelines(patterns)
                 end
                 
                 -- Determine folder name before formatting timeline name
-                if patterns.createNewFolder then
+                if patterns.actionMode == 'duplicate' and patterns.moveToFolder then
                     local folder_v_str = nil
                     local folder_d_str = nil
 
@@ -378,7 +396,7 @@ function processTimelines(patterns)
                 end
                 
                 -- Now, apply name formatting to the timeline name itself, while preserving the date format
-                local onlyVersion = patterns.version and not (patterns.date or patterns.appendV1 or patterns.createNewFolder or (patterns.spaceMode and patterns.spaceMode ~= 'none'))
+                local onlyVersion = patterns.version and not (patterns.date or patterns.appendV1 or (patterns.actionMode == 'duplicate' and patterns.moveToFolder) or (patterns.spaceMode and patterns.spaceMode ~= 'none'))
                 if itm.formatNameBox.Checked and patterns.spaceMode and patterns.spaceMode ~= 'none' and not onlyVersion then
                     -- To preserve date separators, temporarily replace the date with a "safe" placeholder.
                     local date_placeholder = '~~DATE~~'
@@ -437,11 +455,10 @@ function processTimelines(patterns)
                     end
                     
                     if timeline then
-                        if patterns.createNewFolder then
-                            -- Always duplicate and move to new folder
+                        if patterns.actionMode == 'duplicate' then
                             local dup = timeline:DuplicateTimeline(newName)
                             if dup then
-                                if useCustomFolder and folderName then
+                                if patterns.moveToFolder and useCustomFolder and folderName then
                                     local timelineFolder = findTimelineFolder(rootFolder, newName)
                                     if not timelineFolder then
                                         -- Sometimes the new timeline is not found in its original folder immediately
@@ -484,8 +501,7 @@ function processTimelines(patterns)
                                 logMsg(('Failed to duplicate "%s".'):format(orig))
                                 errors = errors + 1
                             end
-                        else
-                            -- Just rename
+                        else -- rename
                             if timeline:SetName(newName) then
                                 logMsg(('Successfully renamed "%s" to "%s".'):format(orig, newName))
                                 renamed = renamed + 1
@@ -519,7 +535,7 @@ end
 
 -- Build UI
 win = dispatcher:AddWindow({
-    ID = 'TimelineVersionUpWin',
+    ID = 'TimelineVersionManager',
     WindowTitle = 'Timeline Version Manager',
     Geometry = {100, 100, 560, 460},
     MinimumSize = {380, 460},
@@ -527,43 +543,24 @@ win = dispatcher:AddWindow({
     ui:VGroup{
         ID = 'root',
         Weight = 1,
-        -- Title label
-        ui:Label{
-            ID = 'TitleLabel',
-            Text = 'Timeline Version Manager',
-            StyleSheet = [[
-                QLabel {
-                    font-size: 14px;
-                    font-weight: bold;
-                    padding: 5px;
-                }
-            ]],
-            Alignment = { AlignHCenter = true, AlignVCenter = true },
-        },
-        ui:VGap(6, 0.01),
         -- Main features section label
         ui:Label{
             ID = 'MainFeaturesLabel',
             Text = 'Main features',
-            StyleSheet = [[QLabel { font-weight: bold; }]],
+            StyleSheet = [[QLabel { font-size: 14px; font-weight: bold; padding: 5px; }]],
             Alignment = { AlignHCenter = true,AlignVCenter = true },
         },
-        -- Main features controls (version, date, format)
-        -- Version checkbox (left-aligned)
-        ui:CheckBox{ID='versionBox', Text='Version +1', Checked=true},
-        -- Version format dropdown (right-aligned)
+        -- Main features controls: version and format
         ui:HGroup{
             Weight = 0,
-            ui:Label{Text = "", Weight = 1},
+            ui:CheckBox{ID='versionBox', Text='Version +1', Checked=true},
             ui:Label{ID='versionFormatLabel', Text='Version format:', Alignment = { AlignRight = true, AlignVCenter = true }},
             ui:ComboBox{ID='versionFormatCombo', MinimumSize={120, 0}},
         },
-        -- Date checkbox (left-aligned)
-        ui:CheckBox{ID='dateBox', Text='Add or replace with current date', Checked=true},
-        -- Date format dropdown (right-aligned)
+        -- Main features controls: date and format
         ui:HGroup{
             Weight = 0,
-            ui:Label{Text = "", Weight = 1},
+            ui:CheckBox{ID='dateBox', Text='Add or replace with current date', Checked=true},
             ui:Label{ID='dateFormatLabel', Text='Date format:', Alignment = { AlignRight = true, AlignVCenter = true }},
             ui:ComboBox{ID='dateFormatCombo'},
         },
@@ -572,25 +569,33 @@ win = dispatcher:AddWindow({
         ui:Label{
             ID = 'SettingsLabel',
             Text = 'Settings',
-            StyleSheet = [[QLabel { font-weight: bold; }]],
+            StyleSheet = [[QLabel { font-size: 14px; font-weight: bold; padding: 5px; }]],
             Alignment = { AlignHCenter = true, AlignVCenter = true },
         },
         -- Settings controls
         ui:VGroup{
             Weight = 0,
+            -- Duplicate + Move: folder naming scheme
+            ui:HGroup{
+                Weight = 0,
+                ui:Label{Text = "Operation Mode:", Weight = 0.1}, -- indent
+                ui:Label{ID='actionLabel', Text='Duplicate and/or move:', Alignment = { AlignRight = true, AlignVCenter = true }},
+                ui:ComboBox{ID='actionCombo', MinimumSize={90, 0}},
+            },
+            -- Folder naming controls
+            ui:HGroup{
+                Weight = 0,
+                ui:Label{Text = "Folder naming:", Weight = 0.1}, -- indent
+                ui:Label{ID='folderNamingLabel', Text="Only when 'Move'-Operation selected:", StyleSheet = [[QLabel { font-size: 11px; }]], Alignment = { AlignRight = true, AlignVCenter = true }},
+                ui:ComboBox{ID='folderNamingCombo'},
+            },
+            ui:VGap(6, 0.01),
             -- Append v1 checkbox and version number input field (single line)
             ui:HGroup{
                 Weight = 0,
                 ui:CheckBox{ID='appendV1Box', Text='Append version number if missing', Checked=true},
                 ui:Label{ID='versionInputLabel', Text='Version number:', Alignment = { AlignRight = true, AlignVCenter = true }},
                 ui:LineEdit{ID='versionInput', Text='1', MinimumSize={60, 0}},
-            },
-            -- Create new folders checkbox and folder naming scheme (single line)
-            ui:HGroup{
-                Weight = 0,
-                ui:CheckBox{ID='createNewFolderBox', Text='Create and move to new folders', Checked=true},
-                ui:Label{ID='folderNamingLabel', Text='Folder naming:', Alignment = { AlignRight = true, AlignVCenter = true }},
-                ui:ComboBox{ID='folderNamingCombo'},
             },
             -- Name formatting enable checkbox and dropdown (already single line)
             ui:HGroup{
@@ -615,7 +620,6 @@ win = dispatcher:AddWindow({
             StyleSheet = [[QLabel { font-weight: bold; }]],
             Alignment = { AlignLeft = true, AlignVCenter = true },
         },
-        ui:VGap(2, 0.01),
         -- Log message box
         ui:HGroup{
             Weight = 1,
@@ -653,6 +657,21 @@ itm.versionFormatCombo:AddItems({'v1', 'v01', 'v001', 'V1', 'V01', 'V001', 'vers
 itm.versionFormatCombo.CurrentIndex = 0
 itm.folderNamingCombo:AddItems({'Version + Date', 'Version', 'Date'})
 itm.folderNamingCombo.CurrentIndex = 0
+itm.actionCombo:AddItems({'Duplicate', 'Duplicate + Move', 'Rename'})
+itm.actionCombo.CurrentIndex = 0
+
+-- Helper: validate UI state and provide user feedback
+function validateUIState()
+    local warnings = {}
+    
+    -- Check if "Duplicate + Move" is selected but no naming changes are selected
+    local selectedAction = itm.actionCombo.CurrentText
+    if selectedAction == 'Duplicate + Move' and not itm.versionBox.Checked and not itm.dateBox.Checked and not itm.appendV1Box.Checked then
+        table.insert(warnings, 'Duplicate + Move is selected but no naming changes are selected. No folders will be created.')
+    end
+    
+    return warnings
+end
 
 -- Only format name if the checkbox is checked
 function getNameFormatMode()
@@ -669,29 +688,50 @@ function getNameFormatMode()
 end
 
 function win.On.runBtn.Clicked(ev)
-    -- UI logic check: warn if createNewFolder is checked but neither version nor date is checked
-    if itm.createNewFolderBox.Checked and not itm.versionBox.Checked and not itm.dateBox.Checked then
-        logMsg('Warning: "Create new folders" is enabled but neither "Version +1" nor "Add/replace date" is enabled. No folders will be created.')
-        -- Optionally, you could return here to prevent running, or just warn
+    -- Validate UI state and show warnings
+    local warnings = validateUIState()
+    for _, warning in ipairs(warnings) do
+        logMsg('Warning: ' .. warning)
     end
+    
     local nameFormatMode = getNameFormatMode()
+    local selectedAction = itm.actionCombo.CurrentText
+    local actionMode = 'duplicate'
+    local moveToFolder = false
+    
+    if selectedAction == 'Duplicate' then
+        actionMode = 'duplicate'
+        moveToFolder = false
+    elseif selectedAction == 'Duplicate + Move' then
+        actionMode = 'duplicate'
+        moveToFolder = true
+    elseif selectedAction == 'Rename' then
+        actionMode = 'rename'
+        moveToFolder = false
+    end
+
     local patterns = {
-        version=itm.versionBox.Checked, 
-        date=itm.dateBox.Checked, 
-        appendV1=itm.appendV1Box.Checked, 
-        spaceMode=nameFormatMode,
-        createNewFolder=itm.createNewFolderBox.Checked,
-        dateFormat=itm.dateFormatCombo.CurrentText,
-        versionFormat=itm.versionFormatCombo.CurrentText,
-        folderNaming=itm.folderNamingCombo.CurrentText,
-        userVersionNum=itm.versionInput.Text
+        version = itm.versionBox.Checked, 
+        date = itm.dateBox.Checked, 
+        appendV1 = itm.appendV1Box.Checked, 
+        spaceMode = nameFormatMode,
+        actionMode = actionMode,
+        moveToFolder = moveToFolder,
+        dateFormat = itm.dateFormatCombo.CurrentText,
+        versionFormat = itm.versionFormatCombo.CurrentText,
+        folderNaming = itm.folderNamingCombo.CurrentText,
+        userVersionNum = itm.versionInput.Text,
     }
+    
     -- Log a summary of what will happen
     logMsg('--- Summary of selected options ---')
     logMsg('Will increment version: ' .. (patterns.version and 'YES' or 'NO'))
     logMsg('Will add/replace date: ' .. (patterns.date and 'YES' or 'NO'))
     logMsg('Will append version if missing: ' .. (patterns.appendV1 and 'YES' or 'NO'))
-    logMsg('Will create new folders: ' .. (patterns.createNewFolder and 'YES' or 'NO'))
+    logMsg('Action: ' .. selectedAction)
+    if patterns.actionMode == 'duplicate' and patterns.moveToFolder then
+        logMsg('Will move to new folder: YES')
+    end
     logMsg('Name formatting: ' .. (patterns.spaceMode ~= 'none' and patterns.spaceMode or 'OFF'))
     logMsg('-----------------------------------')
     processTimelines(patterns)
@@ -707,4 +747,4 @@ itm.TextEdit.BackgroundColor = bgcol
 itm.TextEdit:SetPaletteColor('All', 'Base', bgcol)
 
 dispatcher:RunLoop()
-win:Hide() 
+win:Hide()
