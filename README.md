@@ -82,7 +82,7 @@ Use responsibly, and only if you understand what the script does and how it affe
 - **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
 - **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
 - **Automatic Folder Creation**: Move new timelines to folders named by version, date or version + date.
-- **Custom Name Formatting**: Convert spaces to underscores, minuses, or keep as-is.
+- **Custom Name Formatting**: Convert spaces to underscores, hyphens, or keep as-is.
 - **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or console).
 
 ## Usage
@@ -97,7 +97,7 @@ Use responsibly, and only if you understand what the script does and how it affe
    - **Version and date formats:** Select from a wide range of formats.
    - **Append version if missing:** Add a version number if none is present.
    - **Operation Mode:** Duplicate only, rename or duplicate and move timelines to new folders based on your chosen folder naming scheme.
-   - **Name formatting:** Choose between spaces, underscores, or minuses.
+   - **Name formatting:** Choose between spaces, underscores, or hyphens.
 6. Click **Run actions** to process the selected timelines. Progress and results will be shown in the log area or console.
 7. Review the Media Pool for new/renamed timelines and folders.
 
