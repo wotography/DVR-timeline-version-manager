@@ -130,7 +130,7 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
      - Green: Successfully completed
 4. **Split current date functions to add and or replace dates.**
 
-## Changelog (Lua Script)
+## Changelog
 ### v0.1.10 (2025-08-01)
 - Fixed version format handling
 - Added dropdown for operation mode selection (Duplicate/Duplicate+Move/Rename)
