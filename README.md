@@ -24,8 +24,7 @@ This repository provides a powerful tools for managing timeline versions in DaVi
 
 - **Lua GUI Script**: A graphical tool for batch versioning, renaming, and organizing timelines directly inside DaVinci Resolve Studio. It supports flexible version/date formats, automatic folder creation, and a range of customization options.
 
-## Legacy Python CLI version
-**Python CLI Script**: A command-line tool for advanced users, automation, and scripting outside of Resolve.
+- **Legacy Python CLI Script**: A command-line tool for advanced users, automation, and scripting outside of Resolve.
 
 > **Notice:** The Python script is no longer actively developed or maintained. Please use the GUI Plugin (`timeline_version_manager.lua`).
 
