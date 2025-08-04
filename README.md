@@ -130,6 +130,8 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
 4. **Split current date functions to add and or replace dates.**
 
 ## Changelog
+### v0.1.11 (2025-08-04)
+- Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)
 - Fixed version format handling
 - Added dropdown for operation mode selection (Duplicate/Duplicate+Move/Rename)
