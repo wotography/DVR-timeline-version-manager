@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.10  (2025-08-01)
-local SCRIPT_VERSION = 'v0.1.10'
+-- Version: v0.1.11  (2025-08-04)
+local SCRIPT_VERSION = 'v0.1.11'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -130,15 +130,20 @@ function getVersionString(versionNum, versionFormat)
 end
 
 -- Helper: increment version in name, or add if missing
-function incrementVersion(name, appendV1, versionFormat, userVersionNum)
+function incrementVersion(name, appendV1, versionFormat, userVersionNum, shouldIncrement)
     local v = extractVersion(name)
     if v then
-        local newv = v + 1
-        local vstr = getVersionString(newv, versionFormat)
-        -- Remove old version, then insert new version before date if present
-        -- The order of gsub is important to avoid 'version' becoming 'ersion'
-        local name_wo_version = name:gsub('[vV]ersion%d+', ''):gsub('[vV]%d+', ''):gsub('^%s*', ''):gsub('%s*$', '')
-        return insertVersionBeforeDate(name_wo_version, vstr)
+        if shouldIncrement then
+            local newv = v + 1
+            local vstr = getVersionString(newv, versionFormat)
+            -- Remove old version, then insert new version before date if present
+            -- The order of gsub is important to avoid 'version' becoming 'ersion'
+            local name_wo_version = name:gsub('[vV]ersion%d+', ''):gsub('[vV]%d+', ''):gsub('^%s*', ''):gsub('%s*$', '')
+            return insertVersionBeforeDate(name_wo_version, vstr)
+        else
+            -- Don't increment existing version, just return original name
+            return name
+        end
     else
         if appendV1 then
             local versionNum = tonumber(userVersionNum) or 1
@@ -329,7 +334,7 @@ function processTimelines(patterns)
                 -- Process version first
                 if patterns.version then
                     local oldVersion = extractVersion(newName)
-                    newName = incrementVersion(newName, patterns.appendV1, patterns.versionFormat, patterns.userVersionNum)
+                    newName = incrementVersion(newName, patterns.appendV1, patterns.versionFormat, patterns.userVersionNum, true)
                     local newVersion = extractVersion(newName)
                     if oldVersion then
                         logMsg(('Version: %d → %d'):format(oldVersion, newVersion))
@@ -338,7 +343,7 @@ function processTimelines(patterns)
                     end
                 elseif patterns.appendV1 then
                     -- If only appendV1 is ON, still use user version if missing
-                    newName = incrementVersion(newName, true, patterns.versionFormat, patterns.userVersionNum)
+                    newName = incrementVersion(newName, true, patterns.versionFormat, patterns.userVersionNum, false)
                     if newName ~= orig then
                         logMsg('Added version number to name without version')
                     end
