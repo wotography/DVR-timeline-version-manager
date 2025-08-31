@@ -53,7 +53,7 @@ It is **strongly recommended** to create backups of your DaVinci Resolve project
 Use responsibly, and only if you understand what the script does and how it affects your project.
 
 ### Lua GUI Script
-1. Download the tool here: [timeline_version_manager.lua](https://raw.githubusercontent.com/wotography/DVR-timeline-version-manager/main/timeline_version_manager.lua) or check the latest release.
+1. Download the tool here: [timeline_version_manager.lua](https://github.com/wotography/DVR-timeline-version-manager/releases).
 2. Place the file inside the Scripting Paths:
    - **macOS**:
      ```
