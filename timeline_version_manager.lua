@@ -750,7 +750,7 @@ itm.versionFormatCombo:AddItems({'v1', 'v01', 'v001', 'V1', 'V01', 'V001', 'vers
 itm.versionFormatCombo.CurrentIndex = 0
 itm.folderNamingCombo:AddItems({'Version + Date', 'Version', 'Date'})
 itm.folderNamingCombo.CurrentIndex = 0
-itm.actionCombo:AddItems({'Duplicate', 'Duplicate + Move', 'Rename'})
+itm.actionCombo:AddItems({'Duplicate', 'Duplicate + Move', 'Rename only'})
 itm.actionCombo.CurrentIndex = 0
 
 -- Helper: validate UI state and provide user feedback
@@ -798,7 +798,7 @@ function win.On.runBtn.Clicked(ev)
     elseif selectedAction == 'Duplicate + Move' then
         actionMode = 'duplicate'
         moveToFolder = true
-    elseif selectedAction == 'Rename' then
+    elseif selectedAction == 'Rename only' then
         actionMode = 'rename'
         moveToFolder = false
     end

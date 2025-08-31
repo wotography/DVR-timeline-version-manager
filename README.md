@@ -8,33 +8,49 @@ A toolkit for automatic version management and batch renaming of timelines in Da
 
 ![Screenshot](/images/DVR-timeline-version-manager.png?raw=false "Screenshot")
 
-## Table of Contents
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Donate](#donate)
-- [Installation](#installation)
-- [Features](#features)
-- [Usage](#usage)
-- [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Changelog](#changelog)
-- [License](#license)
+## Quick Start
 
-## Overview
-This repository provides a powerful tools for managing timeline versions in DaVinci Resolve Studio:
+### What it does
+The Timeline Version Manager automates timeline versioning, naming, and organization in DaVinci Resolve Studio. It can:
+- Increment version numbers in timeline names
+- Add or replace dates in timeline names  
+- Duplicate timelines with new names
+- Organize timelines into folders based on version or date
+- Reformat timeline names for consistency
+- Rename existing timelines
 
-- **Lua GUI Script**: A graphical tool for batch versioning, renaming, and organizing timelines directly inside DaVinci Resolve Studio. It supports flexible version/date formats, automatic folder creation, and a range of customization options.
+### Quick Installation
+1. Download [timeline_version_manager.lua](https://github.com/wotography/DVR-timeline-version-manager/releases)
+2. Place it in your DaVinci Resolve scripts folder:
+   - **macOS**: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit`
+   - **Windows**: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit`
+   - **Linux**: `/opt/resolve/Fusion/Scripts/Edit` or `/home/resolve/Fusion/Scripts/Edit`
+3. Enable scripting in Resolve Preferences (Preferences > System > General > External scripting using: Local)
+4. Run from **Workspace > Scripts** menu
 
-- **Legacy Python CLI Script**: A command-line tool for advanced users, automation, and scripting outside of Resolve.
+### Quick Usage
+1. Select timeline(s) in Media Pool
+2. Run the script from **Workspace > Scripts**
+3. Choose operation mode (Duplicate, Duplicate + Move or Rename only)
+4. Configure version/date settings
+5. Click "Run actions"
 
-> **Notice:** The Python script is no longer actively developed or maintained. Please use the GUI Plugin (`timeline_version_manager.lua`).
+## 📖 Detailed Documentation
 
-For more detailed python script-specific instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
+For comprehensive instructions, examples, and troubleshooting, see the **[User Documentation](User-documentation.md)**.
 
 ## Prerequisites
 - **DaVinci Resolve Studio** (the free version does not support scripting)
 - **Scripting enabled** in Resolve Preferences (Preferences > System > General > External scripting using: Local)
 - **Operating System:** macOS, Windows, or Linux (where Resolve Studio is supported)
+
+## Legacy Python Script
+
+This repository also includes a **Legacy Python CLI Script** for advanced users and automation workflows.
+
+> **Notice:** The Python script is no longer actively developed or maintained.
+
+For more detailed python script-specific instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
 
 ## Donate
 Thanks for using this script — I hope it helped with your work!  
@@ -42,8 +58,7 @@ If it saved you time or proved useful, please consider donating a coffee. Your s
 
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 
-## Installation
-### ⚠️ Disclaimer
+## ⚠️ Disclaimer
 
 This tool is provided **as is** and **without any warranty** of any kind.  
 By using this script, you acknowledge that **you do so at your own risk**.  
@@ -52,63 +67,6 @@ I do **not accept any responsibility or liability** for data loss, project corru
 It is **strongly recommended** to create backups of your DaVinci Resolve projects before running the script.
 
 Use responsibly, and only if you understand what the script does and how it affects your project.
-
-### Lua GUI Script
-1. Download the tool here: [timeline_version_manager.lua](https://github.com/wotography/DVR-timeline-version-manager/releases).
-2. Place the file inside the Scripting Paths:
-   - **macOS**:
-     ```
-     /Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit
-     ```
-   - **Windows**:
-     ```
-     C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit
-     ```
-   - **Linux**:
-     ```
-     /opt/resolve/Fusion/Scripts/Edit
-     ```
-     or
-     ```
-     /home/resolve/Fusion/Scripts/Edit
-     ```
-     depending on installation
-3. In DaVinci Resolve, open your project, **enable scripting** in Resolve Preferences (Preferences > System > General > External scripting using: Local)
-4. The script will now appear in the **Workspace > Scripts** menu. You can also run it from the **Console** or **Script Editor** or assign a shortcut key to open the plugin inside Resolve.
-
-## Features
-- **Graphical User Interface (Lua)**: Easy-to-use controls for all options.
-- **Batch Processing**: Rename and version multiple timelines at once.
-- **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
-- **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
-- **Format Standardization**: In rename mode, automatically adjust existing version and date formats to match selected preferences without changing the actual values.
-- **Automatic Folder Creation**: Move new timelines to folders named by version, date or version + date.
-- **Custom Name Formatting**: Convert spaces to underscores, hyphens, or keep as-is.
-- **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or console).
-
-## Usage
-### Lua GUI Script
-1. **Open DaVinci Resolve Studio** and load your project.
-2. In the **Media Pool**, select one or more timelines you want to operate.
-3. Go to **Workspace > Scripts** and run `timeline_version_manager.lua`.
-4. The GUI will appear with options for versioning, date formatting, folder creation, and more.
-5. Adjust the settings as needed:
-   - **Operation Mode:** Choose between Duplicate, Rename, or Duplicate + Move. In Rename mode, existing version and date formats will be automatically adjusted to match your selected preferences.
-   - **Version +1:** Increment version number in timeline names.
-   - **Add/replace date:** Add or update the date in timeline names.
-   - **Version and date formats:** Select from a wide range of formats. In Rename mode, existing formats will be converted to match your selection.
-   - **Append version if missing:** Add a version number if none is present.
-   - **Name formatting:** Choose between spaces, underscores, or hyphens.
-6. Click **Run actions** to process the selected timelines. Progress and results will be shown in the log area or console.
-7. Review the Media Pool for new/renamed timelines and folders.
-
-## Troubleshooting
-Always check the console log for errors first. Commen solutions and issues are:
-- **Script Visibility**: Some users may experience issues with scripts not appearing in the menu. Ensure that the correct script folder is selected.
-- **Plugin does not open**: The GUI may not appear if the script is run from the free version of DaVinci Resolve. Use DaVinci Resolve Studio instead. Make sure you are using the correct version.
-- **Timeline Processing**: If no timelines are processed, check the Console or Log Messages for errors. This issue often occurs if timelines are not selected in the Media Pool before running the script.
-- **Scripting API Errors**: Errors related to the scripting API can usually be resolved by ensuring that scripting is enabled in the Resolve Preferences.
-- **Skipped Item always counts at least one**: The script also detects the current bin as selected but skips it intentionally.
 
 ### Known Issues
 I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
@@ -154,7 +112,7 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
 - Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)
 - Fixed version format handling
-- Added dropdown for operation mode selection (Duplicate/Duplicate+Move/Rename)
+- Added dropdown for operation mode selection (Duplicate/Duplicate+Move/Rename only)
 - Improved UI layout
 ### v0.1.9 (2025-07-28)
 - updated default settings

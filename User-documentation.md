@@ -29,7 +29,7 @@ The Timeline Version Manager is designed to streamline the workflow of video edi
 ## Installation
 
 ### Prerequisites
-- DaVinci Resolve (Free or Studio version)
+- DaVinci Resolve (Studio version)
 - Basic knowledge of DaVinci Resolve's Media Pool
 
 ### Installation Steps
@@ -38,17 +38,16 @@ The Timeline Version Manager is designed to streamline the workflow of video edi
    - Save `timeline_version_manager.lua` to your computer
 
 2. **Access DaVinci Resolve Scripts**
-   - Open DaVinci Resolve
+   - Open DaVinci Resolve Studio
    - Go to **Workspace** → **Scripts** → **Open Scripts Folder**
    - This opens the scripts directory in your file explorer
 
 3. **Install the Script**
    - Copy `timeline_version_manager.lua` to the scripts folder
-   - Restart DaVinci Resolve if it's currently running
 
 4. **Run the Script**
    - In DaVinci Resolve, go to **Workspace** → **Scripts**
-   - Find "Timeline Version Manager" in the list
+   - Find "timeline_version_manager" in the list
    - Click to run the script
 
 ## Features
@@ -58,7 +57,7 @@ The Timeline Version Manager is designed to streamline the workflow of video edi
 #### 1. Operation Modes
 - **Duplicate**: Creates a copy of the selected timeline with a new name
 - **Duplicate + Move**: Creates a copy and moves it to a new folder
-- **Rename**: Renames the existing timeline (no duplication)
+- **Rename only**: Renames the existing timeline (no duplication)
 
 #### 2. Version Management
 - **Version +1**: Automatically increments existing version numbers
@@ -143,7 +142,7 @@ The script provides a clean, intuitive GUI with the following sections:
 - Folder is created based on your naming scheme
 - Best for organizing versions by date or version number
 
-**Rename**
+**Rename only**
 - Renames the existing timeline directly
 - No duplication occurs
 - Use with caution as this modifies the original
@@ -155,7 +154,7 @@ The script provides a clean, intuitive GUI with the following sections:
 - Automatically finds existing version numbers in timeline names
 - Increments them by 1
 - Supports formats like: v1, v01, v001, V1, version1, Version1
-- Example: "Project v1" → "Project v2"
+- Example: "Timeline v1" → "Timeline v2"
 
 **Version Format Options**
 - `v1`, `v01`, `v001`: Lowercase 'v' with various digit padding
@@ -166,14 +165,14 @@ The script provides a clean, intuitive GUI with the following sections:
 **Append version if missing**
 - Adds a version number to timelines that don't have one
 - Uses the version number specified in the input field
-- Example: "Project" → "Project v1" (if version number is set to 1)
+- Example: "Timeline" → "Timeline v1" (if version number is set to 1)
 
 #### Date Management
 
 **Add or replace with current date**
 - Inserts today's date into timeline names
 - Replaces existing dates if found
-- Places dates in logical positions (before existing dates, or at the end)
+- Places dates in same positions of original dates, or at the end if no date found
 
 **Date Format Options**
 - `YYMMDD`: Two-digit year, month, day (e.g., 250831)
@@ -184,16 +183,16 @@ The script provides a clean, intuitive GUI with the following sections:
 
 #### Folder Organization
 
-**Folder Naming Schemes**
-- **Version + Date**: Creates folders like "v1_2025-08-31"
-- **Version**: Creates folders like "v1"
-- **Date**: Creates folders like "2025-08-31"
-
 **How it works**
 - Only applies when "Duplicate + Move" is selected
 - Creates folders in the parent directory of the original timeline
 - Moves the new timeline to the created folder
 - Uses existing folders if they already exist
+
+**Folder Naming Schemes**
+- **Version + Date**: Creates folders like "v1_2025-08-31", "V01_250831", "version001_31-08-2025", etc.
+- **Version**: Creates folders like "v1", "V01", "version0001", etc.
+- **Date**: Creates folders like "2025-08-31", "20250831", "31-08-2025", etc.
 
 #### Name Formatting
 
@@ -302,6 +301,7 @@ The script provides a clean, intuitive GUI with the following sections:
 - The timeline may be locked or in use
 - Try closing any timelines that are currently open in the timeline viewer
 - Check if you have sufficient permissions for the project
+- Check if the same name already exists
 
 ## Technical Details
 
@@ -334,10 +334,10 @@ The script recognizes these date patterns:
 - Processing time is displayed at the end
 
 ### Compatibility
-- **DaVinci Resolve Version**: 17 and later
+- **DaVinci Resolve Studio Version**: 17 and later
 - **Operating Systems**: Windows, macOS, Linux
 - **Script Language**: Lua
-- **Dependencies**: DaVinci Resolve Scripting API
+- **Dependencies**: DaVinci Resolve Studio Scripting API
 
 ## Support and Feedback
 
