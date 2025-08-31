@@ -175,21 +175,36 @@ function removeDate(name)
     return n
 end
 
--- Helper: add current date to name, always after version if present
+-- Helper: add current date to name, replacing existing date in original position
 function addCurrentDate(name, dateFormat)
-    -- Remove any existing date
-    local n = removeDate(name)
-    -- Find version pattern
-    local versionPattern = '([vV]%d+)' -- e.g. v3
-    local versionPos, versionEnd = n:find(versionPattern)
-    if versionPos then
-        -- Insert date after version
-        local before = n:sub(1, versionEnd)
-        local after = n:sub(versionEnd + 1)
-        return before .. ' ' .. getCurrentDateFormatted(dateFormat) .. after
+    -- Find the position of existing date first
+    local datePatterns = {
+        "%d%d%d%d%-%d%d%-%d%d", -- YYYY-MM-DD
+        "%d%d%d%d%d%d%d%d",     -- YYYYMMDD
+        "%d%d%d%d%d%d",        -- YYMMDD
+        "%d%d%-%d%d%-%d%d%d%d",-- DD-MM-YYYY or MM-DD-YYYY
+    }
+    
+    local dateStart, dateEnd = nil, nil
+    local foundDate = nil
+    
+    -- Find existing date and its position
+    for _, pattern in ipairs(datePatterns) do
+        dateStart, dateEnd = name:find(pattern)
+        if dateStart then
+            foundDate = name:sub(dateStart, dateEnd)
+            break
+        end
+    end
+    
+    local newDate = getCurrentDateFormatted(dateFormat)
+    
+    if dateStart then
+        -- Replace date in original position
+        return name:sub(1, dateStart-1) .. newDate .. name:sub(dateEnd+1)
     else
-        -- No version, just append date
-        return n .. ' ' .. getCurrentDateFormatted(dateFormat)
+        -- No existing date, append at end
+        return name .. ' ' .. newDate
     end
 end
 
@@ -348,10 +363,90 @@ function processTimelines(patterns)
                     end
                 end
                 
+                -- Version format adjustment for Rename mode (independent of other settings)
+                if patterns.actionMode == 'rename' then
+                    local oldVersion = extractVersion(newName)
+                    if oldVersion then
+                        local oldVersionStr = newName:match('[vV]%d+') or newName:match('[vV]ersion%d+')
+                        local newVersionStr = getVersionString(oldVersion, patterns.versionFormat)
+                        if oldVersionStr and oldVersionStr ~= newVersionStr then
+                            newName = newName:gsub(oldVersionStr, newVersionStr)
+                            logMsg(('Adjusted version format: %s → %s'):format(oldVersionStr, newVersionStr))
+                        end
+                    end
+                end
+                
                 -- Then process date
                 if patterns.date then
                     newName = addCurrentDate(newName, patterns.dateFormat)
                     logMsg('Added/replaced current date in name')
+                end
+                
+                -- Date format adjustment for Rename mode (independent of other settings)
+                if patterns.actionMode == 'rename' then
+                    -- Find existing date in the name
+                    local datePatterns = {
+                        "%d%d%d%d%-%d%d%-%d%d", -- YYYY-MM-DD
+                        "%d%d%d%d%d%d%d%d",     -- YYYYMMDD
+                        "%d%d%d%d%d%d",        -- YYMMDD
+                        "%d%d%-%d%d%-%d%d%d%d",-- DD-MM-YYYY or MM-DD-YYYY
+                    }
+                    
+                    local dateStart, dateEnd = nil, nil
+                    local foundDate = nil
+                    
+                    -- Find existing date and its position
+                    for _, pattern in ipairs(datePatterns) do
+                        dateStart, dateEnd = newName:find(pattern)
+                        if dateStart then
+                            foundDate = newName:sub(dateStart, dateEnd)
+                            break
+                        end
+                    end
+                    
+                    if foundDate then
+                        -- Parse the found date to get year, month, day
+                        local year, month, day = nil, nil, nil
+                        
+                        -- Try different date formats to extract components
+                        if foundDate:match("^%d%d%d%d%-%d%d%-%d%d$") then
+                            -- YYYY-MM-DD format
+                            year, month, day = foundDate:match("(%d%d%d%d)%-(%d%d)%-(%d%d)")
+                        elseif foundDate:match("^%d%d%d%d%d%d%d%d$") then
+                            -- YYYYMMDD format
+                            year, month, day = foundDate:match("(%d%d%d%d)(%d%d)(%d%d)")
+                        elseif foundDate:match("^%d%d%d%d%d%d$") then
+                            -- YYMMDD format
+                            local yy, mm, dd = foundDate:match("(%d%d)(%d%d)(%d%d)")
+                            year = "20" .. yy
+                            month = mm
+                            day = dd
+                        elseif foundDate:match("^%d%d%-%d%d%-%d%d%d%d$") then
+                            -- DD-MM-YYYY or MM-DD-YYYY format (assume DD-MM-YYYY)
+                            day, month, year = foundDate:match("(%d%d)%-(%d%d)%-(%d%d%d%d)")
+                        end
+                        
+                        if year and month and day then
+                            -- Convert to the selected date format
+                            local newDateStr = nil
+                            if patterns.dateFormat == 'YYYY-MM-DD' then
+                                newDateStr = string.format("%04d-%02d-%02d", year, month, day)
+                            elseif patterns.dateFormat == 'YYYYMMDD' then
+                                newDateStr = string.format("%04d%02d%02d", year, month, day)
+                            elseif patterns.dateFormat == 'YYMMDD' then
+                                newDateStr = string.format("%02d%02d%02d", year % 100, month, day)
+                            elseif patterns.dateFormat == 'MM-DD-YYYY' then
+                                newDateStr = string.format("%02d-%02d-%04d", month, day, year)
+                            elseif patterns.dateFormat == 'DD-MM-YYYY' then
+                                newDateStr = string.format("%02d-%02d-%04d", day, month, year)
+                            end
+                            
+                            if newDateStr and newDateStr ~= foundDate then
+                                newName = newName:sub(1, dateStart-1) .. newDateStr .. newName:sub(dateEnd+1)
+                                logMsg(('Adjusted date format: %s → %s'):format(foundDate, newDateStr))
+                            end
+                        end
+                    end
                 end
                 
                 -- Determine folder name before formatting timeline name
@@ -519,7 +614,7 @@ function processTimelines(patterns)
                         skipped = skipped + 1
                     end
                 else
-                    logMsg(('No changes needed for "%s".'):format(orig))
+                    logMsg(('No changes needed for "%s". Skipping item.'):format(orig))
                     skipped = skipped + 1
                 end
                 count = count + 1
@@ -554,14 +649,19 @@ win = dispatcher:AddWindow({
             StyleSheet = [[QLabel { font-size: 14px; font-weight: bold; padding: 5px; }]],
             Alignment = { AlignHCenter = true,AlignVCenter = true },
         },
-        -- Main features controls: version and format
+        -- Main features controls: operation mode, version format and date
         ui:HGroup{
             Weight = 0,
-            ui:CheckBox{ID='versionBox', Text='Version +1', Checked=true},
-            ui:Label{ID='versionFormatLabel', Text='Version format:', Alignment = { AlignRight = true, AlignVCenter = true }},
-            ui:ComboBox{ID='versionFormatCombo', MinimumSize={120, 0}},
+            ui:Label{Text = "Operation Mode:", Weight = 0.1}, -- indent
+            ui:Label{ID='actionLabel', Text='Duplicate and/or move:', Alignment = { AlignRight = true, AlignVCenter = true }},
+            ui:ComboBox{ID='actionCombo', MinimumSize={90, 0}},
         },
-        -- Main features controls: date and format
+        ui:HGroup{
+        Weight = 0,
+        ui:CheckBox{ID='versionBox', Text='Version +1', Checked=true},
+        ui:Label{ID='versionFormatLabel', Text='Version format:', Alignment = { AlignRight = true, AlignVCenter = true }},
+        ui:ComboBox{ID='versionFormatCombo', MinimumSize={120, 0}},
+        },
         ui:HGroup{
             Weight = 0,
             ui:CheckBox{ID='dateBox', Text='Add or replace with current date', Checked=true},
@@ -577,15 +677,6 @@ win = dispatcher:AddWindow({
             Alignment = { AlignHCenter = true, AlignVCenter = true },
         },
         -- Settings controls
-        ui:VGroup{
-            Weight = 0,
-            -- Duplicate + Move: folder naming scheme
-            ui:HGroup{
-                Weight = 0,
-                ui:Label{Text = "Operation Mode:", Weight = 0.1}, -- indent
-                ui:Label{ID='actionLabel', Text='Duplicate and/or move:', Alignment = { AlignRight = true, AlignVCenter = true }},
-                ui:ComboBox{ID='actionCombo', MinimumSize={90, 0}},
-            },
             -- Folder naming controls
             ui:HGroup{
                 Weight = 0,
@@ -593,7 +684,6 @@ win = dispatcher:AddWindow({
                 ui:Label{ID='folderNamingLabel', Text="Only when 'Move'-Operation selected:", StyleSheet = [[QLabel { font-size: 11px; }]], Alignment = { AlignRight = true, AlignVCenter = true }},
                 ui:ComboBox{ID='folderNamingCombo'},
             },
-            ui:VGap(6, 0.01),
             -- Append v1 checkbox and version number input field (single line)
             ui:HGroup{
                 Weight = 0,
@@ -608,7 +698,6 @@ win = dispatcher:AddWindow({
                 ui:Label{ID='formatLabel', Text=''},
                 ui:ComboBox{ID='formatCombo'},
             },
-        },
         ui:VGap(6, 0.01),
         -- Run/Close buttons (move above log area)
         ui:HGroup{

@@ -80,6 +80,7 @@ Use responsibly, and only if you understand what the script does and how it affe
 - **Batch Processing**: Rename and version multiple timelines at once.
 - **Flexible Version Formats**: Supports v1, v01, v001, V1, V01, V001, version1, version01, version001, Version1, Version01, Version001.
 - **Flexible Date Formats**: YYMMDD, YYYYMMDD, YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY.
+- **Format Standardization**: In rename mode, automatically adjust existing version and date formats to match selected preferences without changing the actual values.
 - **Automatic Folder Creation**: Move new timelines to folders named by version, date or version + date.
 - **Custom Name Formatting**: Convert spaces to underscores, hyphens, or keep as-is.
 - **Comprehensive Logging**: See a summary and detailed log of all actions (GUI or console).
@@ -91,11 +92,11 @@ Use responsibly, and only if you understand what the script does and how it affe
 3. Go to **Workspace > Scripts** and run `timeline_version_manager.lua`.
 4. The GUI will appear with options for versioning, date formatting, folder creation, and more.
 5. Adjust the settings as needed:
+   - **Operation Mode:** Choose between Duplicate, Rename, or Duplicate + Move. In Rename mode, existing version and date formats will be automatically adjusted to match your selected preferences.
    - **Version +1:** Increment version number in timeline names.
    - **Add/replace date:** Add or update the date in timeline names.
-   - **Version and date formats:** Select from a wide range of formats.
+   - **Version and date formats:** Select from a wide range of formats. In Rename mode, existing formats will be converted to match your selection.
    - **Append version if missing:** Add a version number if none is present.
-   - **Operation Mode:** Duplicate only, rename or duplicate and move timelines to new folders based on your chosen folder naming scheme.
    - **Name formatting:** Choose between spaces, underscores, or hyphens.
 6. Click **Run actions** to process the selected timelines. Progress and results will be shown in the log area or console.
 7. Review the Media Pool for new/renamed timelines and folders.
@@ -113,28 +114,36 @@ I am continuously working to improve the plugin. If you encounter any issues not
 
 **Identified Issues**:
 - The window only closes with click on "Close"-button.
-- Dates in the Timeline Name sometimes do not stay in original place.
 
 Your feedback is invaluable, please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
 ## Roadmap
 ### Planned Features
-1. **Save Custom Default Settings**
-   - Add button to save and load custom default settings
-2. **Enhanced Version Naming Options**
-   - Add new prefix options: "edit" or "Edit", "reel" or "Reel"
-   - Add letter-based versioning: "A" through "G"
-   - Example naming pattern: "edit A v1" or "Edit-B-v002"
-3. **Visual Status Indicator**
-   - Add a color-coded status indicator in the GUI:
-     - Orange: Ready to start
-     - Red: Error occurred
-     - Green: Successfully completed
-4. **Split current date functions to add and or replace dates.**
+**Save Custom Default Settings**
+- Add button to save and load custom default settings
+**Enhanced Version Naming Options**
+- Add new prefix options: "edit" or "Edit", "reel" or "Reel"
+- Add letter-based versioning: "A" through "G"
+- Example naming pattern: "edit A v1" or "Edit-B-v002"
+**Visual Status Indicator**
+- Add a color-coded status indicator in the GUI:
+  - Orange: Ready to start
+  - Red: Error occurred
+  - Green: Successfully completed
+**Split current date functions to add and or replace dates.**
+**Add "Save Log" option to review logs on computer.**
 
 ## Changelog
 ### v0.1.12 (2025-08-31)
-- improved logging
+- **New Features**:
+  - Added version format adjustment in rename mode: Automatically converts existing version formats to match the selected version format dropdown without changing the version number
+  - Added date format adjustment in rename mode: Automatically converts existing date formats to match the selected date format dropdown without changing the actual date
+  - Both format adjustments work independently of other checkbox settings when operation mode is set to "Rename"
+- **Bug Fixes**:
+  - Fixed date replacement logic: Dates now replace in their original position instead of being moved to the end
+  - Improved log message clarity: "No changes needed" now shows "Skipping item" for better user feedback
+- **UI Improvements**:
+  - Reorganized UI layout: Moved operation mode selection to the main features section for better workflow
 ### v0.1.11 (2025-08-04)
 - Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)
