@@ -10,6 +10,7 @@
 !images/
 !images/DVR-timeline-version-manager.png
 !images/DVR-timeline-version-manager_v0.1.8.png
+!images/DVR-timeline-version-manager_v0.1.10.png
 
 # Whitelist Python legacy script directory and its contents
 !python-legacy-script/
