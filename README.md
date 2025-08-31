@@ -106,6 +106,7 @@ Always check the console log for errors first. Commen solutions and issues are:
 - **Plugin does not open**: The GUI may not appear if the script is run from the free version of DaVinci Resolve. Use DaVinci Resolve Studio instead. Make sure you are using the correct version.
 - **Timeline Processing**: If no timelines are processed, check the Console or Log Messages for errors. This issue often occurs if timelines are not selected in the Media Pool before running the script.
 - **Scripting API Errors**: Errors related to the scripting API can usually be resolved by ensuring that scripting is enabled in the Resolve Preferences.
+- **Skipped Item always counts at least one**: The script also detects the current bin as selected but skips it intentionally.
 
 ### Known Issues
 I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
@@ -132,6 +133,8 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
 4. **Split current date functions to add and or replace dates.**
 
 ## Changelog
+### v0.1.12 (2025-08-31)
+- improved logging
 ### v0.1.11 (2025-08-04)
 - Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)

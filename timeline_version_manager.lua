@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.11  (2025-08-04)
-local SCRIPT_VERSION = 'v0.1.11'
+-- Version: v0.1.12  (2025-08-31)
+local SCRIPT_VERSION = 'v0.1.12'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -279,12 +279,11 @@ function processTimelines(patterns)
     if patterns.appendV1 then
         logMsg('- Version number to append: ' .. (patterns.userVersionNum or '1'))
     end
-    logMsg('- Action mode: ' .. (patterns.actionMode == 'duplicate' and 'Duplicate' or 'Rename'))
+    logMsg('- Operation mode: ' .. (patterns.selectedActionText or 'Duplicate'))
     if patterns.actionMode == 'duplicate' and patterns.moveToFolder then
-        logMsg('- Move to new folder: ON')
         logMsg('- Folder naming scheme: ' .. (patterns.folderNaming or 'Date'))
     end
-    logMsg('- Name formatting: ' .. (patterns.spaceMode ~= 'none' and patterns.spaceMode or 'OFF'))
+    logMsg('- Name formatting: ' .. (patterns.nameFormatText or 'OFF'))
     
     local pm = resolve:GetProjectManager()
     if not pm then logMsg('No ProjectManager found.') return end
@@ -726,6 +725,9 @@ function win.On.runBtn.Clicked(ev)
         versionFormat = itm.versionFormatCombo.CurrentText,
         folderNaming = itm.folderNamingCombo.CurrentText,
         userVersionNum = itm.versionInput.Text,
+        -- Add UI text values for logging
+        selectedActionText = selectedAction,
+        nameFormatText = itm.formatNameBox.Checked and itm.formatCombo.CurrentText or 'OFF',
     }
     
     -- Log a summary of what will happen
