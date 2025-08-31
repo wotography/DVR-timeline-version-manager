@@ -2,6 +2,7 @@
 
 [![DaVinci Resolve](https://img.shields.io/badge/DaVinci%20Resolve-Studio-blueviolet.svg)](https://www.blackmagicdesign.com/products/davinciresolve)
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
+[![Download](https://img.shields.io/badge/Download-Script-green.svg)](https://raw.githubusercontent.com/wotography/DVR-timeline-version-manager/main/timeline_version_manager.lua)
 
 A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Comes with a graphical GUI (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
