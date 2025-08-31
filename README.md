@@ -5,7 +5,7 @@
 
 A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Comes with a graphical GUI (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
-![Screenshot](/images/DVR-timeline-version-manager.png?raw=true "Screenshot")
+![Screenshot](/images/DVR-timeline-version-manager.png?raw=false "Screenshot")
 
 ## Table of Contents
 - [Overview](#overview)
