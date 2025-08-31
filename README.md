@@ -121,16 +121,20 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
 ### Planned Features
 **Save Custom Default Settings**
 - Add button to save and load custom default settings
+
 **Enhanced Version Naming Options**
 - Add new prefix options: "edit" or "Edit", "reel" or "Reel"
 - Add letter-based versioning: "A" through "G"
 - Example naming pattern: "edit A v1" or "Edit-B-v002"
+
 **Visual Status Indicator**
 - Add a color-coded status indicator in the GUI:
   - Orange: Ready to start
   - Red: Error occurred
   - Green: Successfully completed
+
 **Split current date functions to add and or replace dates.**
+
 **Add "Save Log" option to review logs on computer.**
 
 ## Changelog
