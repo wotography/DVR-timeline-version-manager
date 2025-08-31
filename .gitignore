@@ -4,6 +4,7 @@
 # Main file and README
 !timeline_version_manager.*
 !README*.md
+!User-documentation.md
 !LICENSE
 
 # Images
