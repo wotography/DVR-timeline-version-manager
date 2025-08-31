@@ -110,7 +110,9 @@ Always check the console log for errors first. Commen solutions and issues are:
 ### Known Issues
 I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
 
-**Identified Issues**: none
+**Identified Issues**:
+- The window only closes with click on "Close"-button.
+- Dates in the Timeline Name sometimes do not stay in original place.
 
 Your feedback is invaluable, please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
