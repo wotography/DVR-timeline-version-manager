@@ -149,6 +149,7 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
   - Improved log message clarity: "No changes needed" now shows "Skipping item" for better user feedback
 - **UI Improvements**:
   - Reorganized UI layout: Moved operation mode selection to the main features section for better workflow
+  - Rename "Minus" to "Dash".
 ### v0.1.11 (2025-08-04)
 - Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)

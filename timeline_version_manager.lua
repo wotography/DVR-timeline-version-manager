@@ -265,7 +265,7 @@ end
 function formatNameSpaces(name, mode)
     local formatters = {
         underscore = function(n) return n:gsub('[%s%-_]+', '_') end,
-        minus = function(n) return n:gsub('[%s%-_]+', '-') end,
+        dash = function(n) return n:gsub('[%s%-_]+', '-') end,
         space = function(n) return n:gsub('[_%-]+', ' '):gsub('%s+', ' '):gsub('^%s*', ''):gsub('%s*$', '') end,
     }
     if formatters[mode] then
@@ -742,7 +742,7 @@ win = dispatcher:AddWindow({
 itm = win:GetItems()
 
 -- Populate ComboBox items and set default
-itm.formatCombo:AddItems({'Space','Underscore _','Minus -'})
+itm.formatCombo:AddItems({'Space','Underscore _','Dash -'})
 itm.formatCombo.CurrentIndex = 1
 itm.dateFormatCombo:AddItems({'YYMMDD', 'YYYYMMDD', 'YYYY-MM-DD', 'MM-DD-YYYY', 'DD-MM-YYYY'})
 itm.dateFormatCombo.CurrentIndex = 0
@@ -770,11 +770,11 @@ end
 function getNameFormatMode()
     if itm.formatNameBox.Checked then
         if itm.formatCombo.CurrentIndex == 0 then
-            return 'space' -- keep as is
+            return 'space'
         elseif itm.formatCombo.CurrentIndex == 1 then
             return 'underscore'
         elseif itm.formatCombo.CurrentIndex == 2 then
-            return 'minus'
+            return 'dash'
         end
     end
     return 'none'
