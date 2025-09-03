@@ -95,7 +95,7 @@ Your feedback is invaluable. Please be patient as I work to resolve these issues
 **Split current date functions to add and/or replace dates.**
 
 ## Changelog
-### v1.02 (2025-09-03)
+### v1.02 & v1.03 (2025-09-03)
 - **New Features**:
   - New option to save logs to a file for easier review. Default path: "User/Documents/TimelineVersionManager/Logs". A custom path can be set.
 - **Other**:

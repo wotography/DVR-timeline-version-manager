@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v1.02  (2025-09-03)
-local SCRIPT_VERSION = 'v1.02'
+-- Version: v1.03  (2025-09-03)
+local SCRIPT_VERSION = 'v1.03'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -35,6 +35,7 @@ local dispatcher = bmd.UIDispatcher(ui)
 local saveLogToFile = false
 local selectedLogFolder = nil
 local currentLogFilePath = nil
+local logFileWritesEnabled = false
 
 -- Helper: get OS-specific default Documents folder
 local function getDefaultDocumentsFolder()
@@ -112,7 +113,7 @@ local function generateLogFilePath()
 end
 
 function appendToLogFile(line)
-    if not saveLogToFile then return end
+    if not saveLogToFile or not logFileWritesEnabled then return end
     -- If a custom path is provided in the UI, prefer it
     if itm and itm.SaveLogPathInput and itm.SaveLogPathInput.Text and itm.SaveLogPathInput.Text ~= '' then
         local customPath = normalizePath(itm.SaveLogPathInput.Text)
@@ -933,6 +934,7 @@ function win.On.runBtn.Clicked(ev)
         currentLogFilePath = generateLogFilePath()
         logMsg('Saving log to: ' .. currentLogFilePath)
         saveLogToFile = true
+        logFileWritesEnabled = true
     end
 
     if selectedAction == 'Duplicate' then
@@ -991,9 +993,11 @@ function win.On.SaveLogBox.Clicked(ev)
             local defaultFolder = getDefaultDocumentsFolder() .. (package.config:sub(1,1) == '\\' and '\\TimelineVersionManager\\Logs' or '/TimelineVersionManager/Logs')
             selectedLogFolder = defaultFolder
         end
+        -- Do not create a file yet; only inform the user
         ensureDirectory(selectedLogFolder)
-        currentLogFilePath = generateLogFilePath()
-        logMsg('Saving log to: ' .. currentLogFilePath)
+        currentLogFilePath = nil
+        logFileWritesEnabled = false
+        logMsg('Saving log to folder: ' .. selectedLogFolder)
     else
         logMsg('Save log to file disabled.')
     end
@@ -1015,11 +1019,13 @@ function win.On.browseLogBtn.Clicked(ev)
         end
         selectedLogFolder = normalizedPath
         ensureDirectory(selectedLogFolder)
-        currentLogFilePath = generateLogFilePath()
+        -- Do not generate a file yet; only update folder and inform the user
+        currentLogFilePath = nil
         logMsg('Log folder set to: ' .. selectedLogFolder)
         if itm.SaveLogBox.Checked then
             saveLogToFile = true
-            logMsg('Saving log to: ' .. currentLogFilePath)
+            logFileWritesEnabled = false
+            logMsg('Saving log to folder: ' .. selectedLogFolder)
         end
     else
         logMsg('No folder entered.')
