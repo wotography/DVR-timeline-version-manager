@@ -4,7 +4,7 @@
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=QFD3FZ8V2RLY2)
 [![Download](https://img.shields.io/badge/Download-Script-green.svg)](https://github.com/wotography/DVR-timeline-version-manager/releases)
 
-A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Comes with a graphical GUI (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
+A toolkit for automatic version management and batch renaming of timelines in DaVinci Resolve Studio. Comes with a graphical interface (for use inside Resolve) and a legacy Python CLI script (for automated workflows).
 
 ![Screenshot](/images/DVR-timeline-version-manager.png?raw=false "Screenshot")
 
@@ -25,13 +25,13 @@ The Timeline Version Manager automates timeline versioning, naming, and organiza
    - **macOS**: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/Fusion/Scripts/Edit`
    - **Windows**: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Fusion\Scripts\Edit`
    - **Linux**: `/opt/resolve/Fusion/Scripts/Edit` or `/home/resolve/Fusion/Scripts/Edit`
-3. Enable scripting in Resolve Preferences (Preferences > System > General > External scripting using: Local)
+3. Enable scripting in Resolve Preferences (Preferences > System > General > External scripting using "Local")
 4. Run from **Workspace > Scripts** menu
 
 ### Quick Usage
 1. Select timeline(s) in Media Pool
 2. Run the script from **Workspace > Scripts**
-3. Choose operation mode (Duplicate, Duplicate + Move or Rename only)
+3. Choose an operation mode (Duplicate, Duplicate + Move, or Rename only)
 4. Configure version/date settings
 5. Click "Run actions"
 
@@ -50,7 +50,7 @@ This repository also includes a **Legacy Python CLI Script** for advanced users 
 
 > **Notice:** The Python script is no longer actively developed or maintained.
 
-For more detailed python script-specific instructions see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
+For more detailed Python script–specific instructions, see: [Python CLI Script Documentation](./python-legacy-script/README_py.md) (⚠️ legacy, not maintained).
 
 ## Donate
 Thanks for using this script — I hope it helped with your work!  
@@ -72,9 +72,9 @@ Use responsibly, and only if you understand what the script does and how it affe
 I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
 
 **Identified Issues**:
-- The window only closes with click on "Close"-button.
+- The window only closes by clicking the "Close" button.
 
-Your feedback is invaluable, please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
+Your feedback is invaluable. Please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
 ## Roadmap
 ### Planned Features
@@ -92,11 +92,15 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
   - Red: Error occurred
   - Green: Successfully completed
 
-**Split current date functions to add and or replace dates.**
-
-**Add "Save Log" option to review logs on computer.**
+**Split current date functions to add and/or replace dates.**
 
 ## Changelog
+### v1.02 (2025-09-03)
+- **New Features**:
+  - New option to save logs to a file for easier review. Default path: "User/Documents/TimelineVersionManager/Logs". A custom path can be set.
+- **Other**:
+  - Improved log output: more detail and clearer messages for each operation, improved skipped-items logging, and a better final summary.
+  - Bumped version number for simpler upgrade logic.
 ### v0.1.12 (2025-08-31)
 - **New Features**:
   - Added version format adjustment in rename mode: Automatically converts existing version formats to match the selected version format dropdown without changing the version number
@@ -107,7 +111,7 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
   - Improved log message clarity: "No changes needed" now shows "Skipping item" for better user feedback
 - **UI Improvements**:
   - Reorganized UI layout: Moved operation mode selection to the main features section for better workflow
-  - Rename "Minus" to "Dash".
+  - Renamed "Minus" to "Dash".
 ### v0.1.11 (2025-08-04)
 - Fixed issue with Version+1 checkbox
 ### v0.1.10 (2025-08-01)
@@ -115,7 +119,7 @@ Your feedback is invaluable, please be patient as I work to resolve these issues
 - Added dropdown for operation mode selection (Duplicate/Duplicate+Move/Rename only)
 - Improved UI layout
 ### v0.1.9 (2025-07-28)
-- updated default settings
+- Updated default settings
 ### v0.1.8 (2025-06-20)
 - **Refactoring & Performance**:
   - Major code refactoring for improved readability and maintainability.

@@ -1,7 +1,7 @@
 -- DaVinci Resolve Timeline Version Updater (GUI)
 
--- Version: v0.1.12  (2025-08-31)
-local SCRIPT_VERSION = 'v0.1.12'
+-- Version: v1.02  (2025-09-03)
+local SCRIPT_VERSION = 'v1.02'
 
 -- Helper: log to both console and GUI
 function logMsg(msg)
@@ -9,6 +9,7 @@ function logMsg(msg)
     if itm.TextEdit then
         itm.TextEdit:Append(msg .. '\n')
     end
+    appendToLogFile(msg)
 end
 
 -- Use the global Resolve object if available
@@ -29,6 +30,110 @@ end
 
 local ui = fusion.UIManager
 local dispatcher = bmd.UIDispatcher(ui)
+
+-- Log-to-file state
+local saveLogToFile = false
+local selectedLogFolder = nil
+local currentLogFilePath = nil
+
+-- Helper: get OS-specific default Documents folder
+local function getDefaultDocumentsFolder()
+    local home = os.getenv('HOME') or os.getenv('USERPROFILE') or '.'
+    local documents = nil
+    if package.config:sub(1,1) == '\\' then
+        -- Windows: prefer USERPROFILE, fallback to HOME
+        local userprofile = os.getenv('USERPROFILE') or home
+        documents = userprofile .. '\\Documents'
+    else
+        -- macOS/Linux: use HOME
+        documents = home .. '/Documents'
+    end
+    return documents
+end
+
+-- Helper: normalize path separators for current platform
+local function normalizePath(path)
+    if not path then return path end
+    local isWindows = package.config:sub(1,1) == '\\'
+    if isWindows then
+        -- Convert forward slashes to backslashes on Windows
+        return path:gsub('/', '\\')
+    else
+        -- Convert backslashes to forward slashes on macOS/Linux
+        return path:gsub('\\', '/')
+    end
+end
+
+-- Helper: ensure directory exists (creates if missing)
+local function ensureDirectory(dirpath)
+    if not dirpath or dirpath == '' then return false end
+    
+    -- Try Fusion API first (most reliable in Resolve environment)
+    if bmd and bmd.mkdir then
+        bmd.mkdir(dirpath)
+        return true
+    end
+    
+    -- Fallback to OS commands
+    local isWindows = package.config:sub(1,1) == '\\'
+    local success = false
+    
+    if isWindows then
+        -- Windows: use md command with proper quoting
+        local cmd = 'md "' .. dirpath .. '" 2>nul'
+        success = os.execute(cmd) == 0
+    else
+        -- macOS/Linux: use mkdir -p (creates parent directories)
+        local cmd = 'mkdir -p ' .. string.format("%q", dirpath) .. ' 2>/dev/null'
+        success = os.execute(cmd) == 0
+    end
+    
+    -- Final fallback: try simple mkdir
+    if not success then
+        if isWindows then
+            success = os.execute('md "' .. dirpath .. '"') == 0
+        else
+            success = os.execute('mkdir ' .. string.format("%q", dirpath)) == 0
+        end
+    end
+    
+    return success
+end
+
+-- Helper: generate new log file path in selected or default folder
+local function generateLogFilePath()
+    local baseFolder = selectedLogFolder or (getDefaultDocumentsFolder() .. (package.config:sub(1,1) == '\\' and '\\TimelineVersionManager\\Logs' or '/TimelineVersionManager/Logs'))
+    baseFolder = normalizePath(baseFolder)
+    ensureDirectory(baseFolder)
+    local ts = os.date('%Y-%m-%d_%H-%M-%S')
+    local filename = 'TimelineVersionManager_' .. ts .. '.txt'
+    local sep = (package.config:sub(1,1) == '\\' and '\\' or '/')
+    return baseFolder .. sep .. filename
+end
+
+function appendToLogFile(line)
+    if not saveLogToFile then return end
+    -- If a custom path is provided in the UI, prefer it
+    if itm and itm.SaveLogPathInput and itm.SaveLogPathInput.Text and itm.SaveLogPathInput.Text ~= '' then
+        local customPath = normalizePath(itm.SaveLogPathInput.Text)
+        if selectedLogFolder ~= customPath then
+            selectedLogFolder = customPath
+            ensureDirectory(selectedLogFolder)
+            currentLogFilePath = nil -- force regeneration with new folder
+        end
+    end
+    if not currentLogFilePath then
+        currentLogFilePath = generateLogFilePath()
+    end
+    local fh, err = io.open(currentLogFilePath, 'a')
+    if fh then
+        fh:write(line .. '\n')
+        fh:close()
+    else
+        saveLogToFile = false
+        print('Failed to write log file: ' .. tostring(err))
+    end
+end
 
 -- Helper: get current date as YYYY-MM-DD
 function getCurrentDate()
@@ -280,7 +385,21 @@ function processTimelines(patterns)
     if itm.TextEdit then
         itm.TextEdit:SetText('')
     end
-    logMsg('Timeline versioning started. (Script ' .. SCRIPT_VERSION .. ')')
+    
+    -- Get current time for log header
+    local currentTime = os.date('%H:%M:%S')
+    logMsg('Timeline versioning started at ' .. currentTime .. ' with script ' .. SCRIPT_VERSION .. '.')
+    
+    local pm = resolve:GetProjectManager()
+    if not pm then logMsg('No ProjectManager found.') return end
+    local project = pm:GetCurrentProject()
+    if not project then
+        logMsg('No project open.')
+        return
+    end
+    logMsg('Project Name: ' .. (project:GetName() or 'Unnamed'))
+    
+    logMsg('---')
     logMsg('Settings:')
     logMsg('- Version +1: ' .. (patterns.version and 'ON' or 'OFF'))
     if patterns.version then
@@ -300,14 +419,6 @@ function processTimelines(patterns)
     end
     logMsg('- Name formatting: ' .. (patterns.nameFormatText or 'OFF'))
     
-    local pm = resolve:GetProjectManager()
-    if not pm then logMsg('No ProjectManager found.') return end
-    local project = pm:GetCurrentProject()
-    if not project then
-        logMsg('No project open.')
-        return
-    end
-    logMsg('Project: ' .. (project:GetName() or 'Unnamed'))
     local mediaPool = project:GetMediaPool()
     if not mediaPool then logMsg('No MediaPool found.') return end
     local selected = mediaPool:GetSelectedClips()
@@ -322,6 +433,7 @@ function processTimelines(patterns)
     end
     
     local count, renamed, skipped, errors = 0, 0, 0, 0
+    local skippedItems = {}
     local rootFolder = mediaPool:GetRootFolder()
 
     -- Define date patterns here to be accessible for both folder and name formatting.
@@ -340,10 +452,10 @@ function processTimelines(patterns)
             if props and props['Type'] == 'Timeline' then
                 local orig = item:GetName()
                 logMsg('---')
-                logMsg('Original timeline name: "' .. orig .. '"')
+                logMsg('Processing timeline: "' .. orig .. '"')
                 local newName = orig
                 local folderName = nil
-                local useCustomFolder = false
+                useCustomFolder = false
                 
                 -- Process version first
                 if patterns.version then
@@ -351,15 +463,15 @@ function processTimelines(patterns)
                     newName = incrementVersion(newName, patterns.appendV1, patterns.versionFormat, patterns.userVersionNum, true)
                     local newVersion = extractVersion(newName)
                     if oldVersion then
-                        logMsg(('Version: %d → %d'):format(oldVersion, newVersion))
+                        logMsg(('Incrementing version: %d → %d'):format(oldVersion, newVersion))
                     elseif patterns.appendV1 then
-                        logMsg('Added version number to name without version')
+                        logMsg('Adding version number to name without version')
                     end
                 elseif patterns.appendV1 then
                     -- If only appendV1 is ON, still use user version if missing
                     newName = incrementVersion(newName, true, patterns.versionFormat, patterns.userVersionNum, false)
                     if newName ~= orig then
-                        logMsg('Added version number to name without version')
+                        logMsg('Adding version number to name without version')
                     end
                 end
                 
@@ -371,7 +483,7 @@ function processTimelines(patterns)
                         local newVersionStr = getVersionString(oldVersion, patterns.versionFormat)
                         if oldVersionStr and oldVersionStr ~= newVersionStr then
                             newName = newName:gsub(oldVersionStr, newVersionStr)
-                            logMsg(('Adjusted version format: %s → %s'):format(oldVersionStr, newVersionStr))
+                            logMsg(('Adjusting version format: %s → %s'):format(oldVersionStr, newVersionStr))
                         end
                     end
                 end
@@ -379,7 +491,7 @@ function processTimelines(patterns)
                 -- Then process date
                 if patterns.date then
                     newName = addCurrentDate(newName, patterns.dateFormat)
-                    logMsg('Added/replaced current date in name')
+                    logMsg('Adding/replacing current date in name')
                 end
                 
                 -- Date format adjustment for Rename mode (independent of other settings)
@@ -443,7 +555,7 @@ function processTimelines(patterns)
                             
                             if newDateStr and newDateStr ~= foundDate then
                                 newName = newName:sub(1, dateStart-1) .. newDateStr .. newName:sub(dateEnd+1)
-                                logMsg(('Adjusted date format: %s → %s'):format(foundDate, newDateStr))
+                                logMsg(('Adjusting date format: %s → %s'):format(foundDate, newDateStr))
                             end
                         end
                     end
@@ -539,8 +651,8 @@ function processTimelines(patterns)
                 end
                 
                 if newName ~= orig then
-                    logMsg(('New timeline name: "%s"'):format(newName))
-                    logMsg(('Processing "%s" → "%s"'):format(orig, newName))
+                    logMsg(('Setting new timeline name: "%s"'):format(newName))
+                    logMsg('Processing...')
                     
                     -- Find the timeline object by iterating through project timelines
                     local timeline = nil
@@ -614,22 +726,37 @@ function processTimelines(patterns)
                         skipped = skipped + 1
                     end
                 else
-                    logMsg(('No changes needed for "%s". Skipping item.'):format(orig))
+                    -- Provide immediate feedback for timelines that don't need changes
+                    logMsg('No changes needed - keeping original name')
+                    table.insert(skippedItems, 'No changes needed: "' .. orig .. '"')
                     skipped = skipped + 1
                 end
                 count = count + 1
             else
-                logMsg('Skipped non-timeline item.')
+                local itemName = item:GetName() or 'Unknown item'
+                table.insert(skippedItems, 'Non-timeline item: "' .. itemName .. '"')
                 skipped = skipped + 1
             end
         else
-            logMsg('Skipped invalid item in selection.')
+            table.insert(skippedItems, 'Invalid item in selection')
             skipped = skipped + 1
         end
     end
+    
+    -- Display skipped items if any
+    if #skippedItems > 0 then
+        logMsg('---')
+        logMsg('Skipped items:')
+        for _, skippedItem in ipairs(skippedItems) do
+            logMsg(skippedItem)
+        end
+    end
+    
+    logMsg('---')
+    logMsg('Done.')
     local duration = os.time() - startTime
-    logMsg(string.format('Finished in %d seconds.', duration))
-    logMsg(('Done. %d processed, %d renamed, %d skipped, %d errors.'):format(count, renamed, skipped, errors))
+    logMsg(string.format('Finished in %d seconds at ' .. currentTime .. '.', duration))
+    logMsg(('%d processed, %d renamed, %d skipped, %d errors.'):format(count, renamed, skipped, errors))
 end
 
 -- Build UI
@@ -707,11 +834,13 @@ win = dispatcher:AddWindow({
         },
         ui:VGap(6, 0.01),
         -- Log label
-        ui:Label{
-            ID = 'LogLabel',
-            Text = 'Log',
-            StyleSheet = [[QLabel { font-weight: bold; }]],
-            Alignment = { AlignLeft = true, AlignVCenter = true },
+        ui:HGroup{
+            Weight = 0,
+            ui:Label{Text = "Log", Weight = 0.1},
+            ui:HGap(0.1, 2),
+            ui:CheckBox{ID='SaveLogBox', Text='Save log to file', Checked=false, Alignment = { AlignRight = true }},
+            ui:Label{Text = "Custom path for logs:", Weight = 0.1},
+            ui:LineEdit{ID='SaveLogPathInput', Text='', MinimumSize={80, 0}},
         },
         -- Log message box
         ui:HGroup{
@@ -792,6 +921,20 @@ function win.On.runBtn.Clicked(ev)
     local actionMode = 'duplicate'
     local moveToFolder = false
     
+    -- If saving logs is enabled, start a NEW log file for this run
+    if itm.SaveLogBox and itm.SaveLogBox.Checked then
+        local uiPath = (itm.SaveLogPathInput and itm.SaveLogPathInput.Text ~= '' and itm.SaveLogPathInput.Text) or nil
+        if uiPath then
+            selectedLogFolder = normalizePath(uiPath)
+        elseif not selectedLogFolder then
+            selectedLogFolder = getDefaultDocumentsFolder() .. (package.config:sub(1,1) == '\\' and '\\TimelineVersionManager\\Logs' or '/TimelineVersionManager/Logs')
+        end
+        ensureDirectory(selectedLogFolder)
+        currentLogFilePath = generateLogFilePath()
+        logMsg('Saving log to: ' .. currentLogFilePath)
+        saveLogToFile = true
+    end
+
     if selectedAction == 'Duplicate' then
         actionMode = 'duplicate'
         moveToFolder = false
@@ -835,6 +978,52 @@ end
 
 function win.On.closeBtn.Clicked(ev)
     dispatcher:ExitLoop()
+end
+
+-- Handle Save log to file checkbox
+function win.On.SaveLogBox.Clicked(ev)
+    saveLogToFile = itm.SaveLogBox.Checked
+    if saveLogToFile then
+        local uiPath = (itm.SaveLogPathInput and itm.SaveLogPathInput.Text ~= '' and itm.SaveLogPathInput.Text) or nil
+        if uiPath then
+            selectedLogFolder = normalizePath(uiPath)
+        elseif not selectedLogFolder then
+            local defaultFolder = getDefaultDocumentsFolder() .. (package.config:sub(1,1) == '\\' and '\\TimelineVersionManager\\Logs' or '/TimelineVersionManager/Logs')
+            selectedLogFolder = defaultFolder
+        end
+        ensureDirectory(selectedLogFolder)
+        currentLogFilePath = generateLogFilePath()
+        logMsg('Saving log to: ' .. currentLogFilePath)
+    else
+        logMsg('Save log to file disabled.')
+    end
+end
+
+-- Handle Choose folder button
+function win.On.browseLogBtn.Clicked(ev)
+    -- With custom input line present, prefer updating it instead of native pickers
+    local defaultPath = selectedLogFolder or (getDefaultDocumentsFolder() .. (package.config:sub(1,1) == '\\' and '\\TimelineVersionManager\\Logs' or '/TimelineVersionManager/Logs'))
+    local input, ok = ui:RequestTextInput(ev, {
+        Title = 'Enter log folder path',
+        Text = 'Enter a folder path for logs:',
+        Default = defaultPath,
+    })
+    if ok and input and input ~= '' then
+        local normalizedPath = normalizePath(input)
+        if itm.SaveLogPathInput then
+            itm.SaveLogPathInput.Text = input -- Keep original input in UI
+        end
+        selectedLogFolder = normalizedPath
+        ensureDirectory(selectedLogFolder)
+        currentLogFilePath = generateLogFilePath()
+        logMsg('Log folder set to: ' .. selectedLogFolder)
+        if itm.SaveLogBox.Checked then
+            saveLogToFile = true
+            logMsg('Saving log to: ' .. currentLogFilePath)
+        end
+    else
+        logMsg('No folder entered.')
+    end
 end
 
 win:Show()
