@@ -72,7 +72,7 @@ Use responsibly, and only if you understand what the script does and how it affe
 I am continuously working to improve the plugin. If you encounter any issues not listed here, please report them by opening an Issue with as much detail as possible.
 
 **Identified Issues**:
-- The window only closes by clicking the "Close" button.
+- none
 
 Your feedback is invaluable. Please be patient as I work to resolve these issues and enhance the overall functionality of the plugin.
 
@@ -101,6 +101,7 @@ Your feedback is invaluable. Please be patient as I work to resolve these issues
 - **Other**:
   - Improved log output: more detail and clearer messages for each operation, improved skipped-items logging, and a better final summary.
   - Bumped version number for simpler upgrade logic.
+  - Fixed: The window only closed by clicking the "Close" button. Now it also closes when using the window close x.
 ### v0.1.12 (2025-08-31)
 - **New Features**:
   - Added version format adjustment in rename mode: Automatically converts existing version formats to match the selected version format dropdown without changing the version number

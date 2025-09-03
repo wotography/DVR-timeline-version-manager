@@ -764,7 +764,7 @@ end
 win = dispatcher:AddWindow({
     ID = 'TimelineVersionManager',
     WindowTitle = 'Timeline Version Manager',
-    Geometry = {100, 100, 560, 460},
+    Geometry = {850, 100, 560, 460},
     MinimumSize = {380, 460},
     Spacing = 8,
     ui:VGroup{
@@ -982,6 +982,10 @@ function win.On.closeBtn.Clicked(ev)
     dispatcher:ExitLoop()
 end
 
+function win.On.TimelineVersionManager.Close(ev)
+    dispatcher:ExitLoop()
+end
+
 -- Handle Save log to file checkbox
 function win.On.SaveLogBox.Clicked(ev)
     saveLogToFile = itm.SaveLogBox.Checked
@@ -1032,6 +1036,7 @@ function win.On.browseLogBtn.Clicked(ev)
     end
 end
 
+win:RecalcLayout()
 win:Show()
 bgcol = { R=0.125, G=0.125, B=0.125, A=1 }
 itm.TextEdit.BackgroundColor = bgcol
@@ -1039,3 +1044,4 @@ itm.TextEdit:SetPaletteColor('All', 'Base', bgcol)
 
 dispatcher:RunLoop()
 win:Hide()
+logMsg('TimelineVersionManager Closed')
