@@ -1,6 +1,6 @@
 # DaVinci Resolve Timeline Version Manager
 
-**Version:** v0.1.12 (2025-08-31)
+**Version:** v1.03 (2025-09-03)
 
 A powerful Lua script for DaVinci Resolve that automates timeline versioning, naming, and organization. This tool helps editors maintain clean, organized project structures by automatically handling version increments, date stamps, and folder organization.
 
@@ -105,6 +105,7 @@ The script provides a clean, intuitive GUI with the following sections:
 - **Real-time feedback**: Shows detailed information about each operation
 - **Error reporting**: Displays any issues encountered during processing
 - **Summary statistics**: Shows final results (processed, renamed, skipped, errors)
+- **Save log to file**: Saves the log the a *.txt file to the user home folder > Documents/TimelineVersionManager/Logs. It lets you set a custom path, which are stored until the window is closed.
 
 ## Usage Guide
 
